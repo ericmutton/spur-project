@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "bms-smps-testbench")(type "KiCad")(uri "${KIPRJMOD}/bms-smps-testbench.pretty")(options "")(descr ""))
+)
