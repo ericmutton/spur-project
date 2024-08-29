@@ -1,0 +1,7 @@
+Hardware/KiCAD/sa8x8-breakout/sa8x8-breakout-backups
+Hardware/KiCAD/bms-smps-testbench/bms-smps-testbench-backups
+Hardware/KiCAD/*.kicad_prl
+Hardware/KiCAD/fp-info-cache
+Hardware/KiCAD/fp-lib-table
+Hardware/KiCAD/sym-lib-cache
+Hardware/KiCAD/sym-lib-table
