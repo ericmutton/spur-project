@@ -1,7 +1,29 @@
-Hardware/KiCAD/sa8x8-breakout/sa8x8-breakout-backups
-Hardware/KiCAD/bms-smps-testbench/bms-smps-testbench-backups
-Hardware/KiCAD/*.kicad_prl
-Hardware/KiCAD/fp-info-cache
-Hardware/KiCAD/fp-lib-table
-Hardware/KiCAD/sym-lib-cache
-Hardware/KiCAD/sym-lib-table
+# For PCBs designed using KiCad: https://www.kicad.org/
+# Format documentation: https://kicad.org/help/file-formats/
+
+# Temporary files
+*.000
+*.bak
+*.bck
+*.kicad_pcb-bak
+*.kicad_sch-bak
+*-backups
+*.kicad_prl
+*.sch-bak
+*~
+_autosave-*
+*.tmp
+*-save.pro
+*-save.kicad_pcb
+fp-info-cache
+
+# Netlist files (exported from Eeschema)
+*.net
+
+# Autorouter files (exported from Pcbnew)
+*.dsn
+*.ses
+
+# Exported BOM files
+*.xml
+*.csv
