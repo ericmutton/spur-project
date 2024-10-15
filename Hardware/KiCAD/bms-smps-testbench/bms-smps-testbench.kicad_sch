@@ -5030,7 +5030,7 @@
 	)
 	(wire
 		(pts
-			(xy 252.73 153.67) (xy 237.49 153.67)
+			(xy 237.49 153.67) (xy 242.57 153.67)
 		)
 		(stroke
 			(width 0)
@@ -5097,6 +5097,16 @@
 			(type default)
 		)
 		(uuid "248df100-383a-4aa7-b2e5-5238eede70cf")
+	)
+	(wire
+		(pts
+			(xy 250.19 153.67) (xy 252.73 153.67)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "24de4d68-efa7-44ca-8e94-9d5f73266061")
 	)
 	(wire
 		(pts
@@ -5567,16 +5577,6 @@
 			(type default)
 		)
 		(uuid "5e6eb0f7-2aa1-4f17-b45a-cf78e5a59881")
-	)
-	(wire
-		(pts
-			(xy 252.73 151.13) (xy 252.73 153.67)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "60779e5f-5e9a-4e96-abac-3c65a8c0ed82")
 	)
 	(wire
 		(pts
@@ -6137,6 +6137,16 @@
 			(type default)
 		)
 		(uuid "92405c21-80b3-4d26-88e1-3eaf727b7672")
+	)
+	(wire
+		(pts
+			(xy 252.73 153.67) (xy 252.73 151.13)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "94aea8ef-f677-40aa-a998-9e22fa6c275b")
 	)
 	(wire
 		(pts
@@ -7187,6 +7197,17 @@
 		)
 		(uuid 969e9827-f514-43ad-be89-496bd1c479e6)
 	)
+	(text "\nI_{INMAX} = (1V / R8) × 530\nTypical I_{INMAX} = (1V / 265R) × 530 = 2A\nCommon I_{INMAX} = (1V / 267R) × 530 = 1.99A\n\nPlaced R8: 267R"
+		(exclude_from_sim no)
+		(at 56.642 82.804 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "10db8cbd-c79a-4f52-a31e-e8472cd48185")
+	)
 	(text "BMS Single-Cell"
 		(exclude_from_sim no)
 		(at 16.256 75.184 0)
@@ -7231,7 +7252,7 @@
 		)
 		(uuid "875bc120-82c5-49f2-a901-2377f928d4d9")
 	)
-	(text "V_{OUT} = 0.8V * (1 + R1/R2)\n(3.3V)/0.8 - 1 = R1/R2\n\nFor R3 = 56p, R1 = 1M\nR2 = R1*3.125 = 3.125M\n\nCommon values:\n2.2M + 1M (-1.12%)"
+	(text "V_{OUT} = 0.8V * (1 + R1/R2)\n(3.3V)/0.8 - 1 = R1/R2\n\nFor C3 = 56p, R1 = 1M\nR2 = R1*3.125 = 3.125M\n\nCommon values:\n2.2M + 1M (-1.12%)"
 		(exclude_from_sim no)
 		(at 245.872 73.152 0)
 		(effects
@@ -7723,6 +7744,74 @@
 			(project ""
 				(path "/b2964315-5f76-41bb-a1d4-04083937cdc0"
 					(reference "BT2")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R_US")
+		(at 246.38 153.67 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "0a605180-5c1b-4234-9b67-bc9e0b508b88")
+		(property "Reference" "R1"
+			(at 246.38 147.32 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "2.2M"
+			(at 246.38 149.86 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 246.126 154.686 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 246.38 153.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor, US symbol"
+			(at 246.38 153.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "2735c79a-6e67-44a0-bdfb-f2f96da6d924")
+		)
+		(pin "2"
+			(uuid "fc678a97-0067-45b7-a95a-35c91a3a7323")
+		)
+		(instances
+			(project "bms-smps-testbench"
+				(path "/b2964315-5f76-41bb-a1d4-04083937cdc0"
+					(reference "R1")
 					(unit 1)
 				)
 			)
@@ -9526,7 +9615,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "2.2M"
+		(property "Value" "1M"
 			(at 255.27 148.5899 0)
 			(effects
 				(font
