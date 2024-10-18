@@ -1,0 +1,17 @@
+cmake_minimum_required(VERSION 3.20.0)
+
+set(BOARD esp32c3_devkitm)
+
+find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
+
+project(
+    BMS-SMPS
+    DESCRIPTION "Evaluation project for zephyr,charger API"
+    LANGUAGES C
+)
+
+target_sources(
+    app
+    PRIVATE
+    src/main.c
+)
