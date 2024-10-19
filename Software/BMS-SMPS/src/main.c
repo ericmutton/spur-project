@@ -81,10 +81,10 @@ int main(void)
 
 		k_msleep(500);
 
-	// 	ret = charger_get_prop(chgdev, CHARGER_PROP_STATUS, &val);
-	// 	if (ret < 0) {
-	// 		return ret;
-	// 	}
+		ret = charger_get_prop(chgdev, CHARGER_PROP_STATUS, &val);
+		if (ret < 0) {
+			return ret;
+		}
 		printk("Entering Switch:\n");
 		switch (val.status) {
 		case CHARGER_STATUS_CHARGING:
