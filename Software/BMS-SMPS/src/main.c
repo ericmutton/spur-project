@@ -51,9 +51,10 @@ int main(void)
 		return ret;
 	}
 #endif
-
+	printk("Poll until external power is presented to the charger\n");
 	while (1) {
 		/* Poll until external power is presented to the charger */
+		printk("Charger ONLINE?\n");
 		do {
 			ret = charger_get_prop(chgdev, CHARGER_PROP_ONLINE, &val);
 			if (ret < 0) {
@@ -62,10 +63,15 @@ int main(void)
 
 			k_msleep(100);
 		} while (val.online == CHARGER_ONLINE_OFFLINE);
+		printk("Charger CHARGING?\n");
 
 		val.status = CHARGER_STATUS_CHARGING;
+		printk("Charger status = CHARGER_STATUS_CHARGING\n");
 
-		ret = charger_charge_enable(chgdev, true);
+	// 	// fails here: Instruction Access fault
+	// 	ret = charger_charge_enable(chgdev, true);
+
+	// 	printk("Charger Enabled...\n");
 		if (ret == -ENOTSUP) {
 			printk("Enabling charge not supported, assuming auto charge enable\n");
 			continue;
@@ -75,11 +81,11 @@ int main(void)
 
 		k_msleep(500);
 
-		ret = charger_get_prop(chgdev, CHARGER_PROP_STATUS, &val);
-		if (ret < 0) {
-			return ret;
-		}
-
+	// 	ret = charger_get_prop(chgdev, CHARGER_PROP_STATUS, &val);
+	// 	if (ret < 0) {
+	// 		return ret;
+	// 	}
+		printk("Entering Switch:\n");
 		switch (val.status) {
 		case CHARGER_STATUS_CHARGING:
 			printk("Charging in progress...\n");
