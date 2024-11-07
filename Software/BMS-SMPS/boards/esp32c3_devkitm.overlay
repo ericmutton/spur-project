@@ -3,7 +3,14 @@
         compatible = "ti,bq24190";
         status = "okay";
         reg = <0x6B>; // I2C address of the BQ24190
-        constant-charge-current-max-microamp = <2000000>; // Set to the maximum charge current in microamperes
-        constant-charge-voltage-max-microvolt = <4200000>; // Set to the maximum charge voltage in microvolts (e.g., 4.2V)
+        constant-charge-current-max-microamp = <2000000>; // 2 A
+        constant-charge-voltage-max-microvolt = <3650000>; // 3.65 V
+        ce-gpios = <&gpio0 4 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+    };
+};
+&uart0 {
+    transceiver: sa868 {
+        status = "okay";
+        current-speed = <9600>;
     };
 };
