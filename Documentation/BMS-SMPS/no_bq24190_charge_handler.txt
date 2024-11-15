@@ -1,0 +1,59 @@
+Serial port /dev/ttyUSB0
+Connecting....
+Detecting chip type... ESP32-C3
+ESP-ROM:esp32c3-api1-20210207
+Build:Feb  7 2021
+rst:0x1 (POWERON),boot:0xc (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+mode:DIO, clock div:2
+load:0x3fc89f10,len:0x18b4
+load:0x40380000,len:0x9f00
+SHA-256 comparison failed:
+Calculated: 8aef63a4eada3b08b81812ff1c686600149ea9bdc150d8c966ff0cc4714ed25b
+Expected: 0000000010480000000000000000000000000000000000000000000000000000
+Attempting to boot anyway...
+entry 0x40381dfc
+I (69) boot: ESP Simple boot
+I (69) boot: compile time Oct 17 2024 22:37:15
+I (69) boot: Multicore bootloader
+I (69) spi_flash: detected chip: generic
+I (71) spi_flash: flash io: dio
+W (74) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (86) boot: chip revision: v0.4
+I (89) boot.esp32c3: SPI Speed      : 40MHz
+I (93) boot.esp32c3: SPI Mode       : SLOW READ
+I (97) boot.esp32c3: SPI Flash Size : 4MB
+I (101) boot: Enabling RNG early entropy source...
+[esp32c3] [INF] DRAM: lma 0x00000020 vma 0x3fc89f10 len 0x18b4   (6324)
+[esp32c3] [INF] IRAM: lma 0x000018dc vma 0x40380000 len 0x9f00   (40704)
+[esp32c3] [INF] padd: lma 0x0000b7e8 vma 0x00000000 len 0x4810   (18448)
+[esp32c3] [INF] IMAP: lma 0x00010000 vma 0x42000000 len 0x4b24   (19236)
+[esp32c3] [INF] padd: lma 0x00014b2c vma 0x00000000 len 0xb4cc   (46284)
+[esp32c3] [INF] DMAP: lma 0x00020000 vma 0x3c010000 len 0x1358   (4952)
+[esp32c3] [INF] Image with 6 segments
+[esp32c3] [INF] DROM segment: paddr=00020000h, vaddr=3c010000h, size=01360h (  4960) map
+[esp32c3] [INF] IROM segment: paddr=00010000h, vaddr=42000000h, size=04B22h ( 19234) map
+*** Booting Zephyr OS build v3.7.0 ***
+Found device "bq24190@6b", getting charger data
+[00:00:00.133,000] [1;31m<err> os: [0m
+[00:00:00.133,000] [1;31m<err> os:  mcause: 1, Instruction Access fault[0m
+[00:00:00.133,000] [1;31m<err> os:   mtval: 0[0m
+[00:00:00.133,000] [1;31m<err> os:      a0: 3c011344    t0: 3fc8b618[0m
+[00:00:00.133,000] [1;31m<err> os:      a1: 00000001    t1: 403878ae[0m
+[00:00:00.133,000] [1;31m<err> os:      a2: 00207b21    t2: 00000000[0m
+[00:00:00.133,000] [1;31m<err> os:      a3: 60023008    t3: 58bc3934[0m
+[00:00:00.133,000] [1;31m<err> os:      a4: 00000000    t4: 7d6bc367[0m
+[00:00:00.133,000] [1;31m<err> os:      a5: 00000000    t5: b9b3cc73[0m
+[00:00:00.133,000] [1;31m<err> os:      a6: 00000382    t6: 69f45fb7[0m
+[00:00:00.133,000] [1;31m<err> os:      a7: 0000003e[0m
+[00:00:00.133,000] [1;31m<err> os:      sp: 3fc8d450[0m
+[00:00:00.133,000] [1;31m<err> os:      ra: 42000090[0m
+[00:00:00.133,000] [1;31m<err> os:    mepc: 00000000[0m
+[00:00:00.133,000] [1;31m<err> os: mstatus: 00001880[0m
+[00:00:00.133,000] [1;31m<err> os: [0m
+[00:00:00.133,000] [1;31m<err> os: call trace:[0m
+[00:00:00.133,000] [1;31m<err> os:       0: ra: 42001258[0m
+[00:00:00.133,000] [1;31m<err> os: [0m
+[00:00:00.133,000] [1;31m<err> os: >>> ZEPHYR FATAL ERROR 0: CPU exception on CPU 0[0m
+[00:00:00.133,000] [1;31m<err> os: Current thread: 0x3fc8eaf0 (unknown)[0m
+[00:00:00.248,000] [1;31m<err> os: Halting system[0m
