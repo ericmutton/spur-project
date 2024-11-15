@@ -330,7 +330,9 @@ static void task(void *arg) {
     #ifdef DEBUG
     Serial.println("Module should be restarted.\n");
     #endif
-    // TODO: find out how to 'restart' the SA868 module.
+    // Power Down Pin Control
+    digitalWrite(PD_PIN, LOW); // Set low to power down
     vTaskDelay(10000);
+    pinMode(PD_PIN, INPUT_PULLUP); // Make PD_PIN floating for external pullup
   }
 }
