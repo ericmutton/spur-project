@@ -18,9 +18,13 @@
 
 #define DEBUG
 
-#define MAX_BUFFER_SIZE (50)
+#define MAX_BUFFER_SIZE (50) // ESP32 UART FIFO size is max 128 bytes
 #define TASK_STACK_SIZE (3072)
 
+#define RX_PIN (6);
+#define TX_PIN (7);
+#define PTT_PIN (8);
+#define PD_PIN (9);
 
 typedef struct {
     uint8_t MAX_CONNECTION_ATTEMPTS = 3;
@@ -43,26 +47,20 @@ typedef struct {
 
 /** 
  * SA868 Instruction Set (<CR><LF>)
- * CONNECT: Detect the module is in normal working status.
- * SWEEP: Set the frequency to scan
- * SETGROUP: Set the working parameters of the module
- * SETVOLUME: Set the volume level of the module
- * RSSI: Read Received Signal Strength Indicator value of the module
- * SETFILTER: Set the filter of the module
  */
 enum sa868_instruction_set {
-  CONNECT = 0,  // AT+DMOCONNECT
-  SWEEP,        // S+SWEEP=?
-  SETGROUP,     // AT+DMOSETGROUP=?
-  SETVOLUME,    // AT+DMOSETVOLUME=?
-  RSSI,         // AT+RSSI?
-  SETFILTER,    // AT+SETFILTER=?
+  CONNECT = 0,  // Detect the module is in normal working status
+  SWEEP,        // Set the frequency to scan
+  SETGROUP,     // Set the working parameters of the module
+  SETVOLUME,    // Set the volume level of the module
+  RSSI,         // Read Received Signal Strength Indicator value of the module
+  SETFILTER,    // Set the filter of the module
   UNKNOWN = -1  // Unknown instruction
 };
 char *command_formats[] = {
   "AT+DMOCONNECT\r\n",
   /**
-   * RX_freq
+   * Sweep_freq
    * = [134:174].[mod 1250]: valid VHF frequency when BW=0
    * = [400:480].[mod 2500]: valid UHF frequency when BW=1
    */
@@ -81,20 +79,20 @@ char *command_formats[] = {
   "AT+DMOSETGROUP=%i,%.3d.%.4d,%.3d.%.4d,%.4s,%i,%.4s\r\n",
   // X=[1:8]: set configured volume level to X
   "AT+DMOSETVOLUME=%i\r\n",
+  "AT+RSSI?\r\n",
   /**
    * X=1: emphasis,voice_highpass,voice_lowpass bypass
    * X=0: emphasis,voice_highpass,voice_lowpass normal
    */
-  "AT+RSSI?\r\n",
   "AT+SETFILTER=%i,%i,%i\r\n"
 };
 char *command_instructions[] = {
-  "AT+DMOCONNECT",    // CONNECT
-  "S+",               // SWEEP
-  "AT+DMOSETGROUP",   // SETGROUP
-  "AT+DMOSETVOLUME",  // SETVOLUME
-  "AT+RSSI?",         // RSSI
-  "AT+SETFILTER"      // SETFILTER
+  "AT+DMOCONNECT",
+  "S+",
+  "AT+DMOSETGROUP",
+  "AT+DMOSETVOLUME",
+  "AT+RSSI?",
+  "AT+SETFILTER"
 };
 char *response_formats[] = {
   // +DMOCONNECT:0 -> Normal working status
@@ -141,7 +139,12 @@ const int DMOERROR = -2;
 sa868_config_t config;
 
 char command_buffer[MAX_BUFFER_SIZE];
-char *getCommandFromConfiguration(enum sa868_instruction_set instruction){
+/**
+ * @brief this getter reads relevant configuration data into a command buffer.
+ * @param instruction format to use for generating the terminal-to-module command 
+ * @returns the generated command buffer
+ */
+char *sa868_generateCommand(enum sa868_instruction_set instruction){
   int size = 0;
   switch(instruction) {
     case (CONNECT):
@@ -216,7 +219,7 @@ char *getCommandFromConfiguration(enum sa868_instruction_set instruction){
 int sa868_communication_handler(enum sa868_instruction_set instruction) {
   // instruction and response value begins invalid
   int val = UNKNOWN;
-  char *command = getCommandFromConfiguration(instruction);
+  char *command = sa868_generateCommand(instruction);
   char *response = (char *)malloc(MAX_BUFFER_SIZE);
   memset(response, 0, MAX_BUFFER_SIZE);
   // using Serial1 (UART1) for SA868 communication
@@ -245,7 +248,7 @@ int sa868_communication_handler(enum sa868_instruction_set instruction) {
 
 int sa868_init(sa868_config_t &config) {
   // Configure a temporary buffer for the response
-  int val = -1;
+  int val = UNKNOWN;
   for (int attempt = 0; attempt < config.MAX_CONNECTION_ATTEMPTS; attempt++) {
     val = sa868_communication_handler(CONNECT);
     // continue until return value is zero
@@ -267,7 +270,7 @@ int sa868_init(sa868_config_t &config) {
     val = sa868_communication_handler(instruction);
     if (val == DMOERROR) {
       #ifdef DEBUG
-      Serial.printf("Could not handle terminal to module command: %s\n", getCommandFromConfiguration(instruction));
+      Serial.printf("Could not handle terminal to module command: %s\n", sa868_generateCommand(instruction));
       #endif
       continue;
     }
@@ -283,9 +286,9 @@ void setup() {
    * Data bit = 8 bit
    * Parity = None
    * Stop bit = 1 bit
-   * Terminal Rx,Tx pins = GPIO9,GPIO8 @ 3.3V
+   * Terminal Rx,Tx pins = GPIO6,GPIO7 @ 3.3V
    */
-  Serial1.begin(9600, SERIAL_8N1, 9, 8);
+  Serial1.begin(9600, SERIAL_8N1, RX_PIN, TX_PIN);
 
   //config.MAX_CONNECTION_ATTEMPTS = 3;
   config.bandwidth_wide_fm = 1; // BW = 25 kHz
