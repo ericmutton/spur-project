@@ -244,6 +244,7 @@ int sa868_init(sa868_config_t &configuration) {
       // the terminal should restart the module.
       #ifdef DEBUG_SA868
       DEBUG_SA868.printf("Handshake failed after %d attempts with return value: %d\r\n", attempt + 1, val);
+      DEBUG_SA868.println("Module should be restarted.\n");
       #endif
     }
   }

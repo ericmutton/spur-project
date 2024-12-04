@@ -4,8 +4,7 @@
 #include "sa868.h"
 
 #define DEBUG Serial
-#define DEBUG_BQ24190 Serial
-#define DEBUG_KEYPAD Serial
+// #define DEBUG_KEYPAD Serial
 
 #define TASK_STACK_SIZE (3072)
 
@@ -116,84 +115,78 @@ static void task(void *arg) {
   char entry[10] = "";
   bool rx_entry_mode = false, tx_entry_mode = false;
   int keys_entered, key_index, key_scanned, previous_key_scanned, key_ghost_count;
-  if (val == 0) {
-    while (1) {
-      bool ptt = (pcf8575_readPort(SA868_PTT_PIN) == LOW);
-      if (ptt) {
-        if (ptt_timer < sa868.PTT_TIMEOUT) {
-          Serial.printf("Currently PTT... (%d sec)\n", ptt_timer);
-          vTaskDelay(1000);
-          ptt_timer++;
-        } else {
-          pcf8575_writePort(SA868_PTT_PIN, HIGH);
-          ptt_timer = 0;
-        }
+  while (1) {
+    bool ptt = (pcf8575_readPort(SA868_PTT_PIN) == LOW);
+    if (ptt) {
+      if (ptt_timer < sa868.PTT_TIMEOUT) {
+        Serial.printf("Currently PTT... (%d sec)\n", ptt_timer);
+        vTaskDelay(1000);
+        ptt_timer++;
       } else {
-        key_index = pcf8575_scanKeys();
-        if (key_index != -1) {
-          key_scanned = keypad_layout[key_index];
-          if (key_scanned != previous_key_scanned) {
-            key_ghost_count = 0;
-            previous_key_scanned = key_scanned;
-            #ifdef DEBUG_KEYPAD
-            DEBUG_KEYPAD.printf("New Key Press: %c\n", key_scanned);
-            #endif
-          } else {
-            #ifdef DEBUG_KEYPAD
-            DEBUG_KEYPAD.printf("Same Key Pressed (%d) times: %c\n", key_ghost_count, key_scanned);
-            #endif
-            key_ghost_count++;
-          }
-          switch(key_scanned) {
-            case('*'):
-              if (!rx_entry_mode) {
-                rx_entry_mode = true;
-                Serial.printf("RX Entry Mode enabled...\n");
-                vTaskDelay(1000);
-              }
-              break;
-            case('#'):
-              if (!tx_entry_mode) {
-                tx_entry_mode = true;
-                Serial.printf("TX Entry Mode enabled...\n");
-                vTaskDelay(1000);
-              }
-              break;
-            default:
-              if (rx_entry_mode || tx_entry_mode) {
-                char key_to_enter[2];
-                key_to_enter[0] = key_scanned;
-                key_to_enter[1] = '\0';
-                if (strlen(entry) < 7) {
-                  strcat(entry, key_to_enter);
-                  Serial.printf("Current Keypad Entry (%d): %s\n", strlen(entry), entry);
-                }
-              }
-              vTaskDelay(500);
-              break;
-          }
-          if (strlen(entry) >= 7) {
-            Serial.printf("Leaving entry mode...\n");
-            val = updateFrequency(tx_entry_mode, entry);
-            keys_entered = 0;
-            strcpy(entry, "");
-            rx_entry_mode = false;
-            tx_entry_mode = false;
-          }
+        pcf8575_writePort(SA868_PTT_PIN, HIGH);
+        ptt_timer = 0;
+      }
+    } else {
+      key_index = pcf8575_scanKeys();
+      if (key_index != -1) {
+        key_scanned = keypad_layout[key_index];
+        if (key_scanned != previous_key_scanned) {
+          key_ghost_count = 0;
+          previous_key_scanned = key_scanned;
+          #ifdef DEBUG_KEYPAD
+          DEBUG_KEYPAD.printf("New Key Press: %c\n", key_scanned);
+          #endif
+        } else {
+          #ifdef DEBUG_KEYPAD
+          DEBUG_KEYPAD.printf("Same Key Pressed (%d) times: %c\n", key_ghost_count, key_scanned);
+          #endif
+          key_ghost_count++;
         }
-        if (!rx_entry_mode && !tx_entry_mode) {
-          bq24190_maintainHostMode();
-          val = sa868_communication_handler(RSSI);
-          if (val >= 0) {
-            Serial.printf("RSSI on %.3d.%4.4d MHz : %.3d dB\n", sa868.rx_freq_mhz, sa868.rx_freq_khz, val);
-          }
-          vTaskDelay(1000);
+        switch(key_scanned) {
+          case('*'):
+            if (!rx_entry_mode) {
+              rx_entry_mode = true;
+              Serial.printf("RX Entry Mode enabled...\n");
+              vTaskDelay(1000);
+            }
+            break;
+          case('#'):
+            if (!tx_entry_mode) {
+              tx_entry_mode = true;
+              Serial.printf("TX Entry Mode enabled...\n");
+              vTaskDelay(1000);
+            }
+            break;
+          default:
+            if (rx_entry_mode || tx_entry_mode) {
+              char key_to_enter[2];
+              key_to_enter[0] = key_scanned;
+              key_to_enter[1] = '\0';
+              if (strlen(entry) < 7) {
+                strcat(entry, key_to_enter);
+                Serial.printf("Current Keypad Entry (%d): %s\n", strlen(entry), entry);
+              }
+            }
+            vTaskDelay(500);
+            break;
+        }
+        if (strlen(entry) >= 7) {
+          Serial.printf("Leaving entry mode...\n");
+          val = updateFrequency(tx_entry_mode, entry);
+          keys_entered = 0;
+          strcpy(entry, "");
+          rx_entry_mode = false;
+          tx_entry_mode = false;
         }
       }
+      if (!rx_entry_mode && !tx_entry_mode) {
+        bq24190_maintainHostMode();
+        val = sa868_communication_handler(RSSI);
+        if (val >= 0) {
+          Serial.printf("RSSI on %.3d.%4.4d MHz : %.3d dB\n", sa868.rx_freq_mhz, sa868.rx_freq_khz, val);
+        }
+        vTaskDelay(1000);
+      }
     }
-  } else {
-    #ifdef DEBUG
-    Serial.println("Module should be restarted.\n");
-    #endif
   }
 }
