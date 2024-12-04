@@ -51,7 +51,8 @@ For the purposes here, the SA868 is limited to arbitrary FM modes:
  - Analog FM Voice 
  - Amateur Packet Reporting System (APRS) 
  - Premodulated FM Waveforms
-In Analog FM Voice, a parrot test or signal strength report (Readability-Strength-Tone) would be 
+
+In Analog FM Voice, a parrot test or signal strength report (Readability-Strength-Tone) would be satisfactory.
 ## Phase 2
 After verifying what can be done with the SA868, the next transceiver is the Texas Instruments CC1200. 
 
