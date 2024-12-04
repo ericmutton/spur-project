@@ -7,20 +7,21 @@ typedef struct {
     HardwareSerial *UART;
 
     uint8_t MAX_CONNECTION_ATTEMPTS = 3;
+    uint16_t PTT_TIMEOUT = -1; // default is no timeout
     uint16_t sweep_freq_mhz; uint16_t sweep_freq_khz;
 
-    bool bandwidth_wide_fm;
+    bool bandwidth_wide_fm = true;
     uint16_t tx_freq_mhz; uint16_t tx_freq_khz;
     uint16_t rx_freq_mhz; uint16_t rx_freq_khz;
     char *tx_subaudio = "0000";
-    uint8_t squelch;
+    uint8_t squelch = 3;
     char *rx_subaudio = "0000";
 
-    uint8_t volume_level;
+    uint8_t volume_level = 3;
 
-    bool emphasis_bypass;
-    bool voice_highpass_bypass;
-    bool voice_lowpass_bypass;  
+    bool emphasis_bypass = false;
+    bool voice_highpass_bypass = false;
+    bool voice_lowpass_bypass = false;  
 
 } sa868_config_t;
 
@@ -62,3 +63,5 @@ int sa868_communication_handler(sa868_instruction_set_t instruction);
  * @returns the last staged initialization operation return value
  */
 int sa868_init(sa868_config_t &config);
+
+bool updateFrequency(bool tx_freq, char *entry);

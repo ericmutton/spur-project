@@ -2,7 +2,8 @@
 
 #define MAX_BUFFER_SIZE (50) // ESP32 UART FIFO size is max 128 bytes
 
-// #define DEBUG_SA868
+#define DEBUG Serial
+// #define DEBUG_SA868 Serial
 /** 
  * SA868 Instruction Set (<CR><LF>)
  */
@@ -180,7 +181,7 @@ char *sa868_generateCommand(sa868_instruction_set_t instruction){
       break;
   }
   #ifdef DEBUG_SA868
-  Serial.printf("Generated command: %s \n", command_buffer);
+  DEBUG_SA868.printf("Generated command: %s \n", command_buffer);
   #endif
   return command_buffer;
 }
@@ -201,7 +202,7 @@ int sa868_communication_handler(sa868_instruction_set_t instruction) {
   txFIFOcount = uart->write(command, strlen(command));
   if (txFIFOcount > 0) {
     #ifdef DEBUG_SA868
-    Serial.printf("Sent command over UART of size (%d) bytes: %s\n", txFIFOcount, command);
+    DEBUG_SA868.printf("Sent command over UART of size (%d) bytes: %s\n", txFIFOcount, command);
     #endif
     //uart.flush();
     vTaskDelay(800);
@@ -210,7 +211,7 @@ int sa868_communication_handler(sa868_instruction_set_t instruction) {
       rxFIFOcount = uart->readBytesUntil('\n', response, MAX_BUFFER_SIZE - 1);
       #ifdef DEBUG_SA868
       if (rxFIFOcount > 0) {
-        Serial.printf("Received response over UART of size (%d) bytes: %s\n", rxFIFOcount, response);
+        DEBUG_SA868.printf("Received response over UART of size (%d) bytes: %s\n", rxFIFOcount, response);
       }
       #endif
     }
@@ -239,7 +240,7 @@ int sa868_init(sa868_config_t &configuration) {
     if (attempt >= (sa868.MAX_CONNECTION_ATTEMPTS - 1)) {
       // the terminal should restart the module.
       #ifdef DEBUG_SA868
-      Serial.printf("Handshake failed after %d attempts with return value: %d\r\n", attempt + 1, val);
+      DEBUG_SA868.printf("Handshake failed after %d attempts with return value: %d\r\n", attempt + 1, val);
       #endif
     }
   }
@@ -251,9 +252,49 @@ int sa868_init(sa868_config_t &configuration) {
     val = sa868_communication_handler(instruction);
     if (val == DMOERROR) {
       #ifdef DEBUG_SA868
-      Serial.printf("Could not handle terminal to module command: %s\n", sa868_generateCommand(instruction));
+      DEBUG_SA868.printf("Could not handle terminal to module command: %s\n", sa868_generateCommand(instruction));
       #endif
       continue;
+    }
+  }
+  return val;
+}
+
+bool updateFrequency(bool tx_entry_mode, char *entry) {
+  uint16_t old_freq_mhz; uint16_t old_freq_khz;
+  char freq_mhz[4];
+  char freq_khz[5];
+  strncpy(freq_mhz, entry, sizeof(freq_mhz));
+  freq_mhz[3] = '\0';
+  strncpy(freq_khz, entry+strlen(freq_mhz), sizeof(freq_khz));
+  freq_khz[4] = '\0';
+  if (tx_entry_mode) {
+    old_freq_mhz = sa868.tx_freq_mhz;
+    old_freq_khz = sa868.tx_freq_khz;
+    sa868.tx_freq_mhz = atoi(freq_mhz);
+    sa868.tx_freq_khz = atoi(freq_khz);
+  } else {
+    old_freq_mhz = sa868.rx_freq_mhz;
+    old_freq_khz = sa868.rx_freq_khz;
+    sa868.rx_freq_mhz = atoi(freq_mhz);
+    sa868.rx_freq_khz = atoi(freq_khz);
+  }
+  bool val = sa868_communication_handler(SETGROUP);
+  #ifdef DEBUG
+  DEBUG.printf("%s %s Frequency to %.3d.%.4d MHz\n",
+    val ? "Failed to update" : "Updated",
+    tx_entry_mode ? "TX" : "RX",
+    tx_entry_mode ? sa868.tx_freq_mhz : sa868.rx_freq_mhz,
+    tx_entry_mode ? sa868.tx_freq_khz : sa868.rx_freq_khz);
+  #endif
+  // if unsuccessful, keep old frequency.
+  if (val) {
+    if (tx_entry_mode) {
+      sa868.tx_freq_mhz = old_freq_mhz;
+      sa868.tx_freq_khz = old_freq_khz;
+    } else {
+      sa868.rx_freq_mhz = old_freq_mhz;
+      sa868.rx_freq_khz = old_freq_khz;
     }
   }
   return val;
