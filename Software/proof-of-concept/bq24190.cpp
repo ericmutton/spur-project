@@ -6,18 +6,18 @@
 // standard mode (up to 100 kbits),
 // and fast mode (up to 400 kbits).
 
-#define DEBUG_BQ24190
+#define DEBUG_BQ24190 Serial
 
 extern bq24190_config_t bq24190;
 char access_buffer[sizeof(uint8_t)];
 
 // Table 15. REG08 System Status Register Description
 const char* vbus_statuses[4] {
-        "VBUS is Unknown (no input, or DPDM detection incomplete), ",
-        "VBUS is USB host, ",
-        "VBUS is Adapter port, ",
-        "VBUS is OTG, "
-      };
+  "VBUS is Unknown (no input, or DPDM detection incomplete), ",
+  "VBUS is USB host, ",
+  "VBUS is Adapter port, ",
+  "VBUS is OTG, "
+};
 const char* charger_statuses[4] {
   "Not Charging, ",
   "Pre-charge (<VBATLOWV), ",
@@ -32,11 +32,11 @@ const char* charger_faults[4] {
   "Charge Safety Timer Expiration, "
 };
 const char* ntc_faults[5] {
-  "Normal, ",
-  "Warm, ",
-  "Cool, ",
-  "Cold, ",
-  "Hot, "
+  "Normal (T2-T3), ",
+  "Warm (T3-T5), ",
+  "Cool (T1-T2), ",
+  "Cold (< T1), ",
+  "Hot (> T5), "
 };
 
 int bq24190_init(bq24190_config_t &config) {
@@ -157,14 +157,17 @@ int bq24190_readFaultRegister(char *access_buffer) {
   uint8_t ntc_fault = access_buffer[0] & NTC_FAULT;
 
   #ifdef DEBUG_BQ24190
-  Serial.printf("Present Faults: %s%s%s%s%s%s\n",
+  DEBUG_BQ24190.printf("Power Faults: %s%s%s%s%s%s", // Enumerate each fault as presented
     ((access_buffer[0] & WATCHDOG_FAULT) >> 7) ? "WATCHDOG, " : "",
     ((access_buffer[0] & BOOST_FAULT)    >> 6) ? "BOOST, " : "",
     (charger_fault) > 0                        ? charger_faults[charger_fault] : "",
     ((access_buffer[0] & BAT_FAULT)      >> 3) ? "BATTERY OVP, " : "",
     (ntc_fault) > 0                            ? ntc_faults[ntc_fault] : "",
-    ((access_buffer[0])                 ) == 0 ? "NONE" : ""
+    ((access_buffer[0])                 ) == 0 ? "NONE; " : ""
   );
+  if (access_buffer[0] != 0) {
+    Serial.println();
+  }
   #endif
   return bytes_transferred;
 }
@@ -197,7 +200,7 @@ int bq24190_modifyRegister(bq24190_register_map_t reg, uint8_t field, uint8_t va
     val = (original != (uint8_t)access_buffer[0]); 
     if (val == true) {
       #ifdef DEBUG_BQ24190
-        Serial.printf("New REG%.2X contents: %#x\n", reg, access_buffer[0]);
+        DEBUG_BQ24190.printf("New REG%.2X contents: %#x\n", reg, access_buffer[0]);
       #endif
     }
   }
@@ -212,7 +215,6 @@ int bq24190_modifyRegister(bq24190_register_map_t reg, uint8_t field, uint8_t va
 bool bq24190_maintainHostMode() {
   bool val = false;
   int bytes_transferred = bq24190_readFaultRegister(access_buffer);
-  
   // if Watchdog timer has not yet expired
   if (bytes_transferred > 0 && !((access_buffer[0] & WATCHDOG_FAULT) >> 7)) {
     // Read current I2C Watchdog Timer Setting
@@ -225,14 +227,18 @@ bool bq24190_maintainHostMode() {
     uint8_t vbus_status = ((access_buffer[0] & VBUS_STAT) >> 6); 
     uint8_t charge_status = ((access_buffer[0] & CHRG_STAT) >> 4);
     #ifdef DEBUG_BQ24190
-    Serial.printf("System Status: %s%s\n%s%s%s%s\n",
-      vbus_statuses[vbus_status],
-      charger_statuses[charge_status],
-      ((access_buffer[0] & DPM_STAT)   >> 3) ? "VINDPM or IINDPM, " : "Not DPM, ",
-      ((access_buffer[0] & PG_STAT)    >> 2) ? "Power Good, " : "Not Power Good, ",
-      ((access_buffer[0] & THERM_STAT) >> 1) ? "In Thermal Regulation, " : "Normal, ",
-      ((access_buffer[0] & VSYS_STAT)      ) ? "In VSYSMIN regulation (BAT < VSYSMIN)" : "Not in VSYSMIN regulation (BAT > VSYSMIN)"
-    );
+    if (access_buffer[0] > 0) {
+      DEBUG_BQ24190.printf("System Status: %s%s\n%s%s%s%s\n",
+        vbus_statuses[vbus_status], //00
+        charger_statuses[charge_status], //00
+        ((access_buffer[0] & DPM_STAT)   >> 3) ? "VINDPM or IINDPM, " : "Not DPM, ", //0
+        ((access_buffer[0] & PG_STAT)    >> 2) ? "Power Good, " : "Not Power Good, ", //0
+        ((access_buffer[0] & THERM_STAT) >> 1) ? "In Thermal Regulation, " : "Normal, ", //0
+        ((access_buffer[0] & VSYS_STAT)      ) ? "In VSYSMIN regulation (BAT < VSYSMIN)" : "Not in VSYSMIN regulation (BAT > VSYSMIN)"
+      );
+    } else {
+      DEBUG_BQ24190.printf("Nominal Status (%#x)\n", access_buffer[0]);
+    }
     #endif
   } else {
     // charger has entered default mode
