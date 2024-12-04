@@ -9,6 +9,7 @@
 typedef struct {
   TwoWire *i2c;
   uint8_t sensor_address = 0x20; // known sensor address
+  uint8_t pin_interrupt;
   // Select one of eight PCF8575 sensor address pairs
   // uint8_t sensor_read_address = 0x41;  // 0x41 -> 0x4F
   // uint8_t sensor_write_address = 0x40; // 0x40 -> 0x4E
@@ -31,4 +32,4 @@ int pcf8575_init(pcf8575_config_t &configuration);
 
 int pcf8575_scanKeys();
 
-// char *enter_entry_mode(uint8_t size);
+char pcf8575_readKeypad(int &key_ghost_count);

@@ -7,7 +7,7 @@ typedef struct {
     HardwareSerial *UART;
 
     uint8_t MAX_CONNECTION_ATTEMPTS = 3;
-    uint16_t PTT_TIMEOUT = -1; // default is no timeout
+    uint16_t PTT_TIMEOUT_SECONDS = -1; // default is no timeout
     uint16_t sweep_freq_mhz; uint16_t sweep_freq_khz;
 
     bool bandwidth_wide_fm = true;
