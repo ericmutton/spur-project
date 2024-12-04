@@ -251,13 +251,19 @@ typedef enum {
   // DISABLE = 0,
   BATTERY = 1,
   // USB OTG 5 V at 1.3 A Synchronous Boost Converter Operation
-  OTG // Boost requires OTG pin HIGH.
+  OTG_BOOST // Boost requires OTG pin HIGH.
   //, OTG
 } charger_config_t;
 
 bool bq24190_enableCharging(bool OTG) { 
   bq24190_modifyRegister(REG05, WATCHDOG, DISABLE);
-  bq24190_modifyRegister(REG01, CHG_CONFIG, (BATTERY << 4) & CHG_CONFIG); // Enable Battery Charging
+  charger_config_t charger_conf;
+  if (OTG) {
+    charger_conf = OTG_BOOST;
+  } else {
+    charger_conf = BATTERY;
+  }
+  bq24190_modifyRegister(REG01, CHG_CONFIG, (charger_conf << 4) & CHG_CONFIG); // Enable Battery Charging
 
   // 8.3.3.5.1 Termination when REG02[0] = 1
   // bq24190_modifyRegister(REG02, FORCE_20PCT, true); // 20% Current Limit
