@@ -234,6 +234,9 @@ int sa868_init(sa868_config_t &configuration) {
     val = sa868_communication_handler(CONNECT);
     // continue until return value is zero
     if (val == 0) {
+      #ifdef DEBUG_SA868
+      DEBUG_SA868.printf("Connection successful, handshake return value: %d\r\n", val);
+      #endif
       break;
     }
     // if the handshake command does not receive the module response within N attempts,
