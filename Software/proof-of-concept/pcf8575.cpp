@@ -110,8 +110,8 @@ int pcf8575_scanKeys() {
     pcf8575_writePort(rows[1], HIGH);
     pcf8575_writePort(rows[2], HIGH);
     pcf8575_writePort(rows[3], HIGH);
+    pcf8575_writePort(rows[row], LOW); // Pull-down to scan PORT
     for (col = 0; col < 4; col++) {
-      pcf8575_writePort(rows[row], LOW); // Pull-down to scan PORT
       if (pcf8575_readPort(cols[col]) == LOW) {
         #ifdef DEBUG_PCF8575
         DEBUG_PCF8575.printf("Read in pushbutton (%d,%d) via (PORT%.2d,PORT%.2d)\n", row, col, rows[row]+2, cols[col]+2);
