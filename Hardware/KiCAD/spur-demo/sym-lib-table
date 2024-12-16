@@ -1,0 +1,6 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "spur-demo")(type "KiCad")(uri "${KIPRJMOD}/spur-demo.kicad_sym")(options "")(descr ""))
+  (lib (name "bms-smps-testbench")(type "KiCad")(uri "/var/home/cyndre/Projects/spur-project/Hardware/KiCAD/bms-smps-testbench/bms-smps-testbench.kicad_sym")(options "")(descr ""))
+  (lib (name "Cobalt-Cowboy")(type "KiCad")(uri "/var/home/cyndre/Projects/k5utd/cobalt-cowboy/Cobalt-Cowboy/Hardware/KiCAD/Cobalt-Cowboy.kicad_sym")(options "")(descr ""))
+)
