@@ -1,3 +1,6 @@
+/*
+ * I2C0 and BMS
+ */
 &i2c0 {
     charger: bq24190@6b {
         compatible = "ti,bq24190";
@@ -8,9 +11,27 @@
         ce-gpios = <&gpio0 4 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
     };
 };
-&uart0 {
-    transceiver: sa868 {
-        status = "okay";
-        current-speed = <9600>;
-    };
+/*
+ * UART1 and SA868
+ */
+&uart1 {
+    status = "okay";
+    current-speed = <9600>;
+    pinctrl-0 = <&uart1_default>;
+	pinctrl-names = "default";
+    // transceiver: sa868 {
+    //     variant = "UHF";
+    // };
+};
+&pinctrl {
+	uart1_default: uart1_default {
+		group1 {
+			pinmux = <UART1_TX_GPIO8>;
+			output-high;
+		};
+		group2 {
+			pinmux = <UART1_RX_GPIO9>;
+			bias-pull-up;
+		};
+	};
 };
