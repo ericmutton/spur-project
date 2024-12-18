@@ -5135,7 +5135,7 @@
 		(end 283.21 132.08)
 		(stroke
 			(width 0)
-			(type dot)
+			(type dash)
 			(color 255 0 255 1)
 		)
 		(fill
@@ -5148,7 +5148,7 @@
 		(end 116.84 132.08)
 		(stroke
 			(width 0)
-			(type dot)
+			(type dash)
 			(color 255 0 255 1)
 		)
 		(fill
@@ -5161,7 +5161,7 @@
 		(end 116.84 80.01)
 		(stroke
 			(width 0)
-			(type dot)
+			(type dash)
 			(color 255 0 255 1)
 		)
 		(fill
@@ -5174,7 +5174,7 @@
 		(end 116.84 195.58)
 		(stroke
 			(width 0)
-			(type dot)
+			(type dash)
 			(color 255 0 255 1)
 		)
 		(fill
@@ -5187,7 +5187,7 @@
 		(end 175.26 195.58)
 		(stroke
 			(width 0)
-			(type dot)
+			(type dash)
 			(color 255 0 255 1)
 		)
 		(fill
