@@ -6659,7 +6659,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 114.554 38.354 90)
 			(effects
 				(font
@@ -7256,7 +7256,7 @@
 				(hide yes)
 			)
 		)
-		(property "Value" "3.3V"
+		(property "Value" "+3.3V"
 			(at 243.84 29.21 0)
 			(effects
 				(font
@@ -7414,7 +7414,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 114.554 28.194 90)
 			(effects
 				(font
@@ -8586,7 +8586,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "LED_SMD:LED_0603_1608Metric_Pad1.05x0.95mm_HandSolder"
 			(at 104.14 39.37 0)
 			(effects
 				(font
@@ -9187,7 +9187,7 @@
 				)
 			)
 		)
-		(property "Footprint" "bms-smps-testbench:103AT2"
+		(property "Footprint" "spur-demo:103AT2"
 			(at 104.14 59.69 0)
 			(effects
 				(font
@@ -9336,7 +9336,7 @@
 				(hide yes)
 			)
 		)
-		(property "Value" "3.3V"
+		(property "Value" "+3.3V"
 			(at 22.86 62.23 0)
 			(effects
 				(font
@@ -9420,7 +9420,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "LED_SMD:LED_0603_1608Metric_Pad1.05x0.95mm_HandSolder"
 			(at 104.14 29.21 0)
 			(effects
 				(font
@@ -9921,7 +9921,7 @@
 				(hide yes)
 			)
 		)
-		(property "Value" "3.3V"
+		(property "Value" "+3.3V"
 			(at 34.29 19.05 0)
 			(effects
 				(font
