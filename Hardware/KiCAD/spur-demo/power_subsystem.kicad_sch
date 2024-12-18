@@ -5938,6 +5938,7 @@
 	)
 	(label "STAT"
 		(at 48.26 69.85 0)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -5970,6 +5971,7 @@
 	)
 	(label "~{PG}"
 		(at 50.8 72.39 180)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
