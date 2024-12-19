@@ -234,15 +234,15 @@
 		(remove_unused_layers no)
 		(uuid "5b3c867f-0eb8-4a26-9fa8-f7320df822fa")
 	)
-	(model "103AT-2.stp"
+	(model "${KIPRJMOD}/spur-demo.pretty/3dmodels/103AT-2.stp"
 		(offset
-			(xyz 0 0 0)
+			(xyz 0 1.25 5)
 		)
 		(scale
 			(xyz 1 1 1)
 		)
 		(rotate
-			(xyz 0 0 0)
+			(xyz 90 180 90)
 		)
 	)
 )

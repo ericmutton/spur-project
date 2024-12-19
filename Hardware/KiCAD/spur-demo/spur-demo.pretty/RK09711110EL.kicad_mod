@@ -37,6 +37,7 @@
 		(effects
 			(font
 				(size 1.27 1.27)
+				(thickness 0.15)
 			)
 		)
 	)
@@ -49,6 +50,7 @@
 		(effects
 			(font
 				(size 1.27 1.27)
+				(thickness 0.15)
 			)
 		)
 	)
@@ -61,6 +63,7 @@
 		(effects
 			(font
 				(size 1.27 1.27)
+				(thickness 0.15)
 			)
 		)
 	)
@@ -358,7 +361,7 @@
 		(remove_unused_layers no)
 		(uuid "09a38caf-e84d-4ac9-856d-a8b92b441c10")
 	)
-	(model "${KIPRJMOD}/Cobalt_Cowboy.pretty/3dmodels/rk09711110el.stp"
+	(model "${KIPRJMOD}/spur-demo.pretty/3dmodels/rk09711110el.stp"
 		(offset
 			(xyz 5 2.5 0)
 		)
