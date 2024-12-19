@@ -5175,7 +5175,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Jumper:SolderJumper-3_P1.3mm_Bridged12_RoundedPad1.0x1.5mm_NumberLabels"
 			(at 205.74 33.02 0)
 			(effects
 				(font
@@ -5783,7 +5783,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Jumper:SolderJumper-3_P1.3mm_Open_RoundedPad1.0x1.5mm_NumberLabels"
 			(at 212.09 147.32 0)
 			(effects
 				(font
@@ -6148,7 +6148,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Bridged_Pad1.0x1.5mm"
 			(at 241.3 83.82 0)
 			(effects
 				(font
@@ -6218,7 +6218,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Jumper:SolderJumper-3_P1.3mm_Open_RoundedPad1.0x1.5mm_NumberLabels"
 			(at 231.14 139.7 0)
 			(effects
 				(font
@@ -6510,7 +6510,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm"
 			(at 241.3 73.66 0)
 			(effects
 				(font
@@ -6647,7 +6647,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm"
 			(at 241.3 93.98 0)
 			(effects
 				(font
@@ -7296,7 +7296,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Potentiometer_SMD:Potentiometer_Bourns_3214W_Vertical"
+		(property "Footprint" "Potentiometer_SMD:Potentiometer_Bourns_3314G_Vertical"
 			(at 60.96 48.26 0)
 			(effects
 				(font
