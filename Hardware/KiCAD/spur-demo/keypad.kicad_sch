@@ -2247,7 +2247,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "0072fb88-7024-449d-8811-7adee5607516")
-		(property "Reference" "SW8"
+		(property "Reference" "SW4"
 			(at 79.756 53.34 90)
 			(effects
 				(font
@@ -2301,7 +2301,7 @@
 		(instances
 			(project "spur-demo"
 				(path "/48a1a14a-bba3-4ee0-af51-70720bbf1fda/e48efb72-302e-45b5-b9fb-6ddbb8e8c1ba"
-					(reference "SW8")
+					(reference "SW4")
 					(unit 1)
 				)
 			)
@@ -2414,7 +2414,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "0c7c0bcc-aec2-4139-9de2-440901f1ca4c")
-		(property "Reference" "SW17"
+		(property "Reference" "SW13"
 			(at 105.156 104.14 90)
 			(effects
 				(font
@@ -2468,7 +2468,7 @@
 		(instances
 			(project "spur-demo"
 				(path "/48a1a14a-bba3-4ee0-af51-70720bbf1fda/e48efb72-302e-45b5-b9fb-6ddbb8e8c1ba"
-					(reference "SW17")
+					(reference "SW13")
 					(unit 1)
 				)
 			)
@@ -2489,7 +2489,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "0c97ffe3-e1ad-4136-8b53-cf8496605ed7")
-		(property "Reference" "SW7"
+		(property "Reference" "SW3"
 			(at 54.356 53.34 90)
 			(effects
 				(font
@@ -2543,7 +2543,7 @@
 		(instances
 			(project "spur-demo"
 				(path "/48a1a14a-bba3-4ee0-af51-70720bbf1fda/e48efb72-302e-45b5-b9fb-6ddbb8e8c1ba"
-					(reference "SW7")
+					(reference "SW3")
 					(unit 1)
 				)
 			)
@@ -2564,7 +2564,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "120663fa-d0b0-4014-869d-5921768d5781")
-		(property "Reference" "SW15"
+		(property "Reference" "SW11"
 			(at 54.356 104.14 90)
 			(effects
 				(font
@@ -2618,7 +2618,7 @@
 		(instances
 			(project "spur-demo"
 				(path "/48a1a14a-bba3-4ee0-af51-70720bbf1fda/e48efb72-302e-45b5-b9fb-6ddbb8e8c1ba"
-					(reference "SW15")
+					(reference "SW11")
 					(unit 1)
 				)
 			)
@@ -2731,7 +2731,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "1776e499-3831-4400-a2fb-dbe6d29b0e7f")
-		(property "Reference" "SW9"
+		(property "Reference" "SW5"
 			(at 105.156 53.34 90)
 			(effects
 				(font
@@ -2785,7 +2785,7 @@
 		(instances
 			(project "spur-demo"
 				(path "/48a1a14a-bba3-4ee0-af51-70720bbf1fda/e48efb72-302e-45b5-b9fb-6ddbb8e8c1ba"
-					(reference "SW9")
+					(reference "SW5")
 					(unit 1)
 				)
 			)
@@ -2898,7 +2898,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "251a5aef-a0f3-464a-80d8-98070a987420")
-		(property "Reference" "SW16"
+		(property "Reference" "SW12"
 			(at 79.756 104.14 90)
 			(effects
 				(font
@@ -2952,7 +2952,7 @@
 		(instances
 			(project "spur-demo"
 				(path "/48a1a14a-bba3-4ee0-af51-70720bbf1fda/e48efb72-302e-45b5-b9fb-6ddbb8e8c1ba"
-					(reference "SW16")
+					(reference "SW12")
 					(unit 1)
 				)
 			)
@@ -3249,7 +3249,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "2c9567a6-dc61-4a06-9358-df493e1418b3")
-		(property "Reference" "SW10"
+		(property "Reference" "SW15"
 			(at 54.356 129.54 90)
 			(effects
 				(font
@@ -3303,7 +3303,7 @@
 		(instances
 			(project "spur-demo"
 				(path "/48a1a14a-bba3-4ee0-af51-70720bbf1fda/e48efb72-302e-45b5-b9fb-6ddbb8e8c1ba"
-					(reference "SW10")
+					(reference "SW15")
 					(unit 1)
 				)
 			)
@@ -3416,7 +3416,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "35587d2e-0667-4035-806b-89113a421371")
-		(property "Reference" "SW11"
+		(property "Reference" "SW7"
 			(at 54.356 78.74 90)
 			(effects
 				(font
@@ -3470,7 +3470,7 @@
 		(instances
 			(project "spur-demo"
 				(path "/48a1a14a-bba3-4ee0-af51-70720bbf1fda/e48efb72-302e-45b5-b9fb-6ddbb8e8c1ba"
-					(reference "SW11")
+					(reference "SW7")
 					(unit 1)
 				)
 			)
@@ -3583,7 +3583,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "3eb72ba6-4e52-4948-8faa-a80091304d7e")
-		(property "Reference" "SW21"
+		(property "Reference" "SW18"
 			(at 130.556 129.54 90)
 			(effects
 				(font
@@ -3637,7 +3637,7 @@
 		(instances
 			(project "spur-demo"
 				(path "/48a1a14a-bba3-4ee0-af51-70720bbf1fda/e48efb72-302e-45b5-b9fb-6ddbb8e8c1ba"
-					(reference "SW21")
+					(reference "SW18")
 					(unit 1)
 				)
 			)
@@ -3652,7 +3652,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "481ee408-b9db-4b52-b4b8-364c968525e5")
-		(property "Reference" "SW20"
+		(property "Reference" "SW14"
 			(at 130.556 104.14 90)
 			(effects
 				(font
@@ -3706,7 +3706,7 @@
 		(instances
 			(project "spur-demo"
 				(path "/48a1a14a-bba3-4ee0-af51-70720bbf1fda/e48efb72-302e-45b5-b9fb-6ddbb8e8c1ba"
-					(reference "SW20")
+					(reference "SW14")
 					(unit 1)
 				)
 			)
@@ -3721,7 +3721,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "4c89633c-a4f3-4b8d-b361-a0f0004792c3")
-		(property "Reference" "SW3"
+		(property "Reference" "SW20"
 			(at 155.956 78.74 90)
 			(effects
 				(font
@@ -3775,7 +3775,7 @@
 		(instances
 			(project "spur-demo"
 				(path "/48a1a14a-bba3-4ee0-af51-70720bbf1fda/e48efb72-302e-45b5-b9fb-6ddbb8e8c1ba"
-					(reference "SW3")
+					(reference "SW20")
 					(unit 1)
 				)
 			)
@@ -3796,7 +3796,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "53899c3f-dce5-4c6f-b1f7-ba266370128c")
-		(property "Reference" "SW12"
+		(property "Reference" "SW8"
 			(at 79.756 78.74 90)
 			(effects
 				(font
@@ -3850,7 +3850,7 @@
 		(instances
 			(project "spur-demo"
 				(path "/48a1a14a-bba3-4ee0-af51-70720bbf1fda/e48efb72-302e-45b5-b9fb-6ddbb8e8c1ba"
-					(reference "SW12")
+					(reference "SW8")
 					(unit 1)
 				)
 			)
@@ -3963,7 +3963,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "5dcc3cbd-cf43-458f-a2ac-fceade47c1cd")
-		(property "Reference" "SW4"
+		(property "Reference" "SW6"
 			(at 130.556 53.34 90)
 			(effects
 				(font
@@ -4017,7 +4017,7 @@
 		(instances
 			(project "spur-demo"
 				(path "/48a1a14a-bba3-4ee0-af51-70720bbf1fda/e48efb72-302e-45b5-b9fb-6ddbb8e8c1ba"
-					(reference "SW4")
+					(reference "SW6")
 					(unit 1)
 				)
 			)
@@ -4038,7 +4038,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "5f81b543-be2f-41ea-8955-cffff7991894")
-		(property "Reference" "SW6"
+		(property "Reference" "SW21"
 			(at 155.956 104.14 90)
 			(effects
 				(font
@@ -4092,7 +4092,7 @@
 		(instances
 			(project "spur-demo"
 				(path "/48a1a14a-bba3-4ee0-af51-70720bbf1fda/e48efb72-302e-45b5-b9fb-6ddbb8e8c1ba"
-					(reference "SW6")
+					(reference "SW21")
 					(unit 1)
 				)
 			)
@@ -4803,7 +4803,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "aadde588-316d-4b3a-bf2f-b99098157a97")
-		(property "Reference" "SW18"
+		(property "Reference" "SW17"
 			(at 105.156 129.54 90)
 			(effects
 				(font
@@ -4857,7 +4857,7 @@
 		(instances
 			(project "spur-demo"
 				(path "/48a1a14a-bba3-4ee0-af51-70720bbf1fda/e48efb72-302e-45b5-b9fb-6ddbb8e8c1ba"
-					(reference "SW18")
+					(reference "SW17")
 					(unit 1)
 				)
 			)
@@ -4878,7 +4878,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "b3dd749a-29b9-42af-a8ec-7b02df8a49b6")
-		(property "Reference" "SW14"
+		(property "Reference" "SW16"
 			(at 79.756 129.54 90)
 			(effects
 				(font
@@ -4932,7 +4932,7 @@
 		(instances
 			(project "spur-demo"
 				(path "/48a1a14a-bba3-4ee0-af51-70720bbf1fda/e48efb72-302e-45b5-b9fb-6ddbb8e8c1ba"
-					(reference "SW14")
+					(reference "SW16")
 					(unit 1)
 				)
 			)
@@ -5217,7 +5217,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "daa1ac4e-0b59-4077-ab1c-68bd2213dfe1")
-		(property "Reference" "SW5"
+		(property "Reference" "SW10"
 			(at 130.556 78.74 90)
 			(effects
 				(font
@@ -5271,7 +5271,7 @@
 		(instances
 			(project "spur-demo"
 				(path "/48a1a14a-bba3-4ee0-af51-70720bbf1fda/e48efb72-302e-45b5-b9fb-6ddbb8e8c1ba"
-					(reference "SW5")
+					(reference "SW10")
 					(unit 1)
 				)
 			)
@@ -5476,7 +5476,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "ed965000-fbb0-4d0b-ba91-3277652d6222")
-		(property "Reference" "SW13"
+		(property "Reference" "SW9"
 			(at 105.156 78.74 90)
 			(effects
 				(font
@@ -5530,7 +5530,7 @@
 		(instances
 			(project "spur-demo"
 				(path "/48a1a14a-bba3-4ee0-af51-70720bbf1fda/e48efb72-302e-45b5-b9fb-6ddbb8e8c1ba"
-					(reference "SW13")
+					(reference "SW9")
 					(unit 1)
 				)
 			)
