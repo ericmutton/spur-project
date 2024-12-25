@@ -4440,7 +4440,7 @@
 				)
 			)
 		)
-		(property "Value" "SW_Push"
+		(property "Value" "RESET"
 			(at 232.41 22.86 0)
 			(effects
 				(font
@@ -6250,7 +6250,7 @@
 				)
 			)
 		)
-		(property "Value" "SW_Push"
+		(property "Value" "BOOT"
 			(at 205.74 22.86 0)
 			(effects
 				(font
