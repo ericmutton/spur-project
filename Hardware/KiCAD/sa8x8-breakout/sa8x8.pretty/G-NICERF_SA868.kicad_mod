@@ -3,7 +3,7 @@
 	(generator "pcbnew")
 	(generator_version "8.0")
 	(layer "F.Cu")
-	(property "Reference" ""
+	(property "Reference" "Ref**"
 		(at 0 -12.3451 0)
 		(layer "F.SilkS")
 		(uuid "f7390565-e5e0-4634-88c6-c69f230b3f77")
@@ -312,6 +312,90 @@
 		(layer "F.SilkS")
 		(uuid "d8a5d2bd-5683-46c7-83eb-f87de1b6ad3e")
 	)
+	(fp_line
+		(start -15.244333 1.958661)
+		(end -15.244333 -6.07558)
+		(stroke
+			(width 0.01)
+			(type default)
+		)
+		(layer "Edge.Cuts")
+		(uuid "00c2d0b4-c1d5-4a48-b69c-6fd1edebc02f")
+	)
+	(fp_line
+		(start -14.244333 -7.07558)
+		(end -13.704333 -7.07558)
+		(stroke
+			(width 0.01)
+			(type default)
+		)
+		(layer "Edge.Cuts")
+		(uuid "5db581e8-50fb-4343-8480-d663d9766aa9")
+	)
+	(fp_line
+		(start -13.704333 2.958661)
+		(end -14.244333 2.958661)
+		(stroke
+			(width 0.01)
+			(type default)
+		)
+		(layer "Edge.Cuts")
+		(uuid "af628cf8-2f9e-4019-9b6d-bbb45c266f66")
+	)
+	(fp_line
+		(start -12.704333 -6.07558)
+		(end -12.704333 1.958661)
+		(stroke
+			(width 0.01)
+			(type default)
+		)
+		(layer "Edge.Cuts")
+		(uuid "542e595f-dc13-4f65-a32a-4723c8bf9dd1")
+	)
+	(fp_arc
+		(start -15.244333 -6.07558)
+		(mid -14.95144 -6.782687)
+		(end -14.244333 -7.07558)
+		(stroke
+			(width 0.01)
+			(type default)
+		)
+		(layer "Edge.Cuts")
+		(uuid "4955e486-1cc5-4292-bd6d-2315b34449af")
+	)
+	(fp_arc
+		(start -14.244333 2.958661)
+		(mid -14.95144 2.665768)
+		(end -15.244333 1.958661)
+		(stroke
+			(width 0.01)
+			(type default)
+		)
+		(layer "Edge.Cuts")
+		(uuid "ba47fef8-41ef-4cb0-9110-493c65c9ef56")
+	)
+	(fp_arc
+		(start -13.704333 -7.07558)
+		(mid -12.997226 -6.782687)
+		(end -12.704333 -6.07558)
+		(stroke
+			(width 0.01)
+			(type default)
+		)
+		(layer "Edge.Cuts")
+		(uuid "c7299225-127b-4211-a579-6533f8ff9b92")
+	)
+	(fp_arc
+		(start -12.704333 1.958661)
+		(mid -12.997226 2.665768)
+		(end -13.704333 2.958661)
+		(stroke
+			(width 0.01)
+			(type default)
+		)
+		(layer "Edge.Cuts")
+		(uuid "ff451a96-b78c-45ea-aae2-a570adbbea1a")
+	)
 	(pad "1" smd rect
 		(at -13.3525 -9.5601 180)
 		(size 1.9 3.9)
@@ -472,7 +556,7 @@
 		(thermal_bridge_angle 0)
 		(uuid "5130d537-507b-4d8e-b277-f506caf6b928")
 	)
-	(model "${KIPRJMOD}/EASYEDA_MODELS/WIRELM-SMD_G-NICERF_SA868.step"
+	(model "${KIPRJMOD}/sa8x8.pretty/3dmodels/SA868.stp"
 		(offset
 			(xyz -0 -0 0)
 		)

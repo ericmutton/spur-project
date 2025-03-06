@@ -367,4 +367,48 @@
 		(remove_unused_layers no)
 		(uuid "c4a93c55-7cdd-4d4b-94b6-720462388b48")
 	)
+	(model "${KICAD8_3DMODEL_DIR}/Connector_PinSocket_2.54mm.3dshapes/PinSocket_1x04_P2.54mm_Vertical.step"
+		(offset
+			(xyz -4 2.5 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 0 0 -90)
+		)
+	)
+	(model "${KICAD8_3DMODEL_DIR}/Connector_PinHeader_2.54mm.3dshapes/PinHeader_1x04_P2.54mm_Vertical.step"
+		(offset
+			(xyz 3.5 2.5 11)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 0 180 90)
+		)
+	)
+	(model "${KIPRJMOD}/spur-demo.pretty/3dmodels/Microphone Module.step"
+		(offset
+			(xyz 29 31.5 -3)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 90 0 90)
+		)
+	)
+	(model "${KICAD8_3DMODEL_DIR}/Sensor_Audio.3dshapes/POM-2244P-C3310-2-R.wrl"
+		(offset
+			(xyz -0.75 31 11.5)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 0 0 0)
+		)
+	)
 )
