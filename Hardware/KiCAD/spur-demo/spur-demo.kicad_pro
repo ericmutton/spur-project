@@ -37,9 +37,9 @@
         "other_text_thickness": 0.15,
         "other_text_upright": false,
         "pads": {
-          "drill": 0.762,
-          "height": 1.524,
-          "width": 1.524
+          "drill": 1.02,
+          "height": 1.53,
+          "width": 1.53
         },
         "silk_line_width": 0.1,
         "silk_text_italic": false,
@@ -52,20 +52,7 @@
         }
       },
       "diff_pair_dimensions": [],
-      "drc_exclusions": [
-        "clearance|91519607|89359500|efec6946-c492-489d-87b3-45e60f72e6fc|b43507b3-5737-4bb4-8940-2ca37f53790d",
-        "clearance|91919607|85134500|a2395299-f64f-476e-8505-48e0e226faff|b1f785e3-41a9-46b1-a123-f770ebc123ff",
-        "clearance|92169607|89359500|b43507b3-5737-4bb4-8940-2ca37f53790d|77c5656e-19f7-479c-bc51-4d26af964600",
-        "clearance|92569607|85134500|b6a2ad61-89b2-40e1-a912-f3bd38b318b1|a2395299-f64f-476e-8505-48e0e226faff",
-        "clearance|92819607|89359500|77c5656e-19f7-479c-bc51-4d26af964600|bd87d4fc-46a3-4f37-b853-d37d2fb06dba",
-        "clearance|93219607|85134500|3d483fd4-68b4-4e93-960a-fe40ceb40622|b6a2ad61-89b2-40e1-a912-f3bd38b318b1",
-        "hole_clearance|128650162|105366015|6321277d-f254-4396-918d-4d5ba1a46668|0f0ca587-754b-4e50-a445-921a76cab903",
-        "hole_clearance|128650162|105366015|6321277d-f254-4396-918d-4d5ba1a46668|8a2fb89f-98d9-4371-be5a-75e93774a5a2",
-        "hole_clearance|128650162|99266015|0c9dcecf-590a-4e6f-aa84-fe68a6bd7891|d13c0ed7-9362-4852-ae4c-2002820916ff",
-        "hole_clearance|128650162|99266015|0c9dcecf-590a-4e6f-aa84-fe68a6bd7891|da5544c2-dce8-4ecc-83ca-953e68f13d28",
-        "hole_clearance|227711419|131820378|f100817d-7db0-4518-ac56-0d3a13464ab0|34989d52-4d44-4e59-aa68-28e52cc18e8d",
-        "hole_clearance|234847499|135379878|7560096d-ec0b-462c-9317-a936d8f58921|d35fa6dc-a2b7-4646-8cea-b435058151a4"
-      ],
+      "drc_exclusions": [],
       "meta": {
         "version": 2
       },
@@ -75,7 +62,7 @@
         "connection_width": "warning",
         "copper_edge_clearance": "error",
         "copper_sliver": "warning",
-        "courtyards_overlap": "error",
+        "courtyards_overlap": "warning",
         "diff_pair_gap_out_of_range": "error",
         "diff_pair_uncoupled_length_too_long": "error",
         "drill_out_of_range": "error",
@@ -229,9 +216,7 @@
     "equivalence_files": []
   },
   "erc": {
-    "erc_exclusions": [
-      "multiple_net_names|558800|1485900|69017522-1dd6-42d9-80ef-eea85f6e471a|c8d41bf3-b9b7-4f47-843d-9e43831b1f96|/48a1a14a-bba3-4ee0-af51-70720bbf1fda|/48a1a14a-bba3-4ee0-af51-70720bbf1fda|/48a1a14a-bba3-4ee0-af51-70720bbf1fda"
-    ],
+    "erc_exclusions": [],
     "meta": {
       "version": 0
     },
@@ -442,8 +427,12 @@
     }
   },
   "libraries": {
-    "pinned_footprint_libs": [],
-    "pinned_symbol_libs": []
+    "pinned_footprint_libs": [
+      "spur-demo"
+    ],
+    "pinned_symbol_libs": [
+      "spur-demo"
+    ]
   },
   "meta": {
     "filename": "spur-demo.kicad_pro",
