@@ -52,7 +52,14 @@
         }
       },
       "diff_pair_dimensions": [],
-      "drc_exclusions": [],
+      "drc_exclusions": [
+        "silk_edge_clearance|43885244|145515021|a223fcfa-9668-4d78-9e41-fa10077bf9af|a963391b-19f9-495c-a078-96b892ff0c8c",
+        "silk_edge_clearance|61835244|145552608|a223fcfa-9668-4d78-9e41-fa10077bf9af|01138776-95a4-41ed-a0a0-51cbfea90019",
+        "silk_edge_clearance|61885244|145536583|a223fcfa-9668-4d78-9e41-fa10077bf9af|af2d52b7-988b-4d78-b301-4edfc859c565",
+        "silk_over_copper|51074667|129963988|bdf78ba1-8065-42a6-9b3a-b6dafe57f76a|00000000-0000-0000-0000-000000000000",
+        "silk_over_copper|54701087|129938783|f20d7dda-17f4-4a3a-9482-48fda10040ee|00000000-0000-0000-0000-000000000000",
+        "silk_over_copper|60874372|129963988|faa2c166-a965-404f-9f62-e618394e3450|00000000-0000-0000-0000-000000000000"
+      ],
       "meta": {
         "version": 2
       },
@@ -62,7 +69,7 @@
         "connection_width": "warning",
         "copper_edge_clearance": "error",
         "copper_sliver": "warning",
-        "courtyards_overlap": "warning",
+        "courtyards_overlap": "error",
         "diff_pair_gap_out_of_range": "error",
         "diff_pair_uncoupled_length_too_long": "error",
         "drill_out_of_range": "error",
@@ -208,7 +215,6 @@
       "mfg": "",
       "mpn": ""
     },
-    "layer_pairs": [],
     "layer_presets": [],
     "viewports": []
   },
@@ -217,7 +223,9 @@
     "equivalence_files": []
   },
   "erc": {
-    "erc_exclusions": [],
+    "erc_exclusions": [
+      "multiple_net_names|558800|1485900|69017522-1dd6-42d9-80ef-eea85f6e471a|c8d41bf3-b9b7-4f47-843d-9e43831b1f96|/48a1a14a-bba3-4ee0-af51-70720bbf1fda|/48a1a14a-bba3-4ee0-af51-70720bbf1fda|/48a1a14a-bba3-4ee0-af51-70720bbf1fda"
+    ],
     "meta": {
       "version": 0
     },
@@ -403,15 +411,10 @@
       "duplicate_sheet_names": "error",
       "endpoint_off_grid": "warning",
       "extra_units": "error",
-      "footprint_filter": "ignore",
-      "footprint_link_issues": "warning",
-      "four_way_junction": "ignore",
       "global_label_dangling": "warning",
       "hier_label_mismatch": "error",
       "label_dangling": "error",
-      "label_multiple_wires": "warning",
       "lib_symbol_issues": "warning",
-      "lib_symbol_mismatch": "warning",
       "missing_bidi_pin": "warning",
       "missing_input_pin": "warning",
       "missing_power_pin": "error",
@@ -424,30 +427,21 @@
       "pin_not_driven": "error",
       "pin_to_pin": "error",
       "power_pin_not_driven": "error",
-      "same_local_global_label": "warning",
-      "similar_label_and_power": "warning",
       "similar_labels": "warning",
-      "similar_power": "warning",
       "simulation_model_issue": "ignore",
-      "single_global_label": "ignore",
       "unannotated": "error",
-      "unconnected_wire_endpoint": "warning",
       "unit_value_mismatch": "error",
       "unresolved_variable": "error",
       "wire_dangling": "error"
     }
   },
   "libraries": {
-    "pinned_footprint_libs": [
-      "spur-demo"
-    ],
-    "pinned_symbol_libs": [
-      "spur-demo"
-    ]
+    "pinned_footprint_libs": [],
+    "pinned_symbol_libs": []
   },
   "meta": {
     "filename": "spur-demo.kicad_pro",
-    "version": 3
+    "version": 1
   },
   "net_settings": {
     "classes": [
@@ -462,7 +456,6 @@
         "microvia_drill": 0.1,
         "name": "Default",
         "pcb_color": "rgba(0, 0, 0, 0.000)",
-        "priority": 2147483647,
         "schematic_color": "rgba(0, 0, 0, 0.000)",
         "track_width": 0.2,
         "via_diameter": 0.6,
@@ -471,7 +464,7 @@
       }
     ],
     "meta": {
-      "version": 4
+      "version": 3
     },
     "net_colors": null,
     "netclass_assignments": null,
@@ -547,7 +540,6 @@
       ],
       "filter_string": "",
       "group_symbols": true,
-      "include_excluded_from_bom": false,
       "name": "Grouped By Value",
       "sort_asc": true,
       "sort_field": "Reference"
@@ -582,7 +574,6 @@
     "net_format_name": "",
     "page_layout_descr_file": "",
     "plot_directory": "",
-    "space_save_all_events": true,
     "spice_current_sheet_as_root": false,
     "spice_external_command": "spice \"%I\"",
     "spice_model_current_sheet_as_root": true,
