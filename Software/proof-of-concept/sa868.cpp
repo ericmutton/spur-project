@@ -2,7 +2,6 @@
 
 #define MAX_BUFFER_SIZE (50) // ESP32 UART FIFO size is max 128 bytes
 
-#define DEBUG Serial
 // #define DEBUG_SA868 Serial
 /** 
  * SA868 Instruction Set (<CR><LF>)
@@ -84,6 +83,16 @@ char *response_formats[] = {
 //   return (sa868_instruction_set_t)(UNKNOWN);  // Return unknown instruction if not found
 // }
 
+char sa868_ctcss_frequencies[38][9] = {
+  "067.0 Hz", "071.9 Hz", "074.4 Hz", "077.0 Hz", "079.7 Hz", "082.5 Hz",
+  "085.4 Hz", "088.5 Hz", "091.5 Hz", "094.8 Hz", "097.4 Hz", "100.0 Hz",
+  "103.5 Hz", "107.2 Hz", "110.9 Hz", "114.8 Hz", "118.8 Hz", "123.0 Hz",
+  "127.3 Hz", "131.8 Hz", "136.5 Hz", "141.3 Hz", "146.2 Hz", "151.4 Hz",
+  "156.7 Hz", "162.2 Hz", "167.9 Hz", "173.8 Hz", "179.9 Hz", "186.2 Hz",
+  "192.8 Hz", "203.5 Hz", "210.7 Hz", "218.1 Hz", "225.7 Hz", "233.6 Hz",
+  "241.8 Hz", "250.3 Hz"
+};
+
 char sa868_ctdss_code[100][5] = {
 	"023I", "025I", "026I", "031I", "032I", "043I", "047I", "051I", "054I", "065I", 
 	"071I", "072I", "073I", "074I", "114I", "115I", "116I", "125I", "131I", "132I", 
@@ -111,6 +120,10 @@ uint32_t sa868_ctdss_pattern[100] = {
 };
 
 extern sa868_config_t sa868;
+
+char *sa868_analog_subtone(char *ctcss_frequency) {
+  return sa868_ctcss_frequencies[atoi(ctcss_frequency) - 1];
+}
 
 char command_buffer[MAX_BUFFER_SIZE];
 /**
@@ -204,7 +217,7 @@ int sa868_communication_handler(sa868_instruction_set_t instruction) {
     #ifdef DEBUG_SA868
     DEBUG_SA868.printf("Sent command over UART of size (%d) bytes: %s\n", txFIFOcount, command);
     #endif
-    //uart.flush();
+    //uart.flush(); // flush or delay UART buffer access
     vTaskDelay(800);
     int availableBytes = uart->available();
     if (availableBytes > 0) {
@@ -221,6 +234,14 @@ int sa868_communication_handler(sa868_instruction_set_t instruction) {
   } else {
     // extract instruction return value from response
     int returnCount = sscanf(response, response_formats[instruction], &val);
+    // if (instruction == RSSI) {
+    //   // Datasheet suggests the module reports RSSI in dB.
+    //   // What is the fixed reference value for the SA868?
+    //   // val += sa868.rssi_offset; // calibration offset for dBm
+    //   // //val *= -1; // RSSI is expected to be sub-milliwatt
+    //   // // -73 dBm is S9, -174 dBm S0
+    //   // sa868.rssi = -1*(255 - val);
+    // }
   }
   free(response);
   return val;
@@ -284,8 +305,8 @@ bool updateFrequency(bool tx_entry_mode, char *entry) {
     sa868.rx_freq_khz = atoi(freq_khz);
   }
   bool val = sa868_communication_handler(SETGROUP);
-  #ifdef DEBUG
-  DEBUG.printf("%s %s Frequency to %.3d.%.4d MHz\n",
+  #ifdef DEBUG_SA868
+  DEBUG_SA868.printf("%s %s Frequency to %.3d.%.4d MHz\n",
     val ? "Failed to update" : "Updated",
     tx_entry_mode ? "TX" : "RX",
     tx_entry_mode ? sa868.tx_freq_mhz : sa868.rx_freq_mhz,
@@ -302,4 +323,15 @@ bool updateFrequency(bool tx_entry_mode, char *entry) {
     }
   }
   return val;
+}
+
+char *sa868_s_meter() {
+  if (sa868.rssi >= -128 && sa868.rssi < -120) return "S3";
+  if (sa868.rssi >= -120 && sa868.rssi < -112) return "S4";
+  if (sa868.rssi >= -112 && sa868.rssi < -104) return "S5";
+  if (sa868.rssi >= -104 && sa868.rssi < -96) return "S6";
+  if (sa868.rssi >= -96 && sa868.rssi < -88) return "S7";
+  if (sa868.rssi >= -88 && sa868.rssi < -80) return "S8";
+  if (sa868.rssi >= -72 && sa868.rssi < -64) return "S9";
+  //if (sa868.rssi >= -73 && sa868.rssi < -118) {"S9+"};
 }

@@ -23,6 +23,11 @@ typedef struct {
     bool voice_highpass_bypass = false;
     bool voice_lowpass_bypass = false;  
 
+    int16_t rssi = 0; // ranges from 0 to 255
+    int8_t rssi_offset = -30; // Module reports RSSI value in dB
+
+
+
 } sa868_config_t;
 
 typedef enum {
@@ -34,6 +39,8 @@ typedef enum {
   SETFILTER,    // Set the filter of the module
   DMOERROR = -1  // Unknown instruction
 } sa868_instruction_set_t;
+
+char *sa868_analog_subtone(char *ctcss_frequency);
 
 /**
  * @brief this getter reads relevant configuration data into a command buffer.
@@ -65,3 +72,5 @@ int sa868_communication_handler(sa868_instruction_set_t instruction);
 int sa868_init(sa868_config_t &config);
 
 bool updateFrequency(bool tx_freq, char *entry);
+
+char *sa868_s_meter();

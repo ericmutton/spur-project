@@ -6,7 +6,7 @@
 // standard mode (up to 100 kbits),
 // and fast mode (up to 400 kbits).
 
-#define DEBUG_BQ24190 Serial
+// #define DEBUG_BQ24190 Serial
 
 extern bq24190_config_t bq24190;
 char access_buffer[sizeof(uint8_t)];
@@ -226,9 +226,8 @@ bool bq24190_maintainHostMode() {
     bytes_transferred = bq24190_readRegister(access_buffer, REG08);
     uint8_t vbus_status = ((access_buffer[0] & VBUS_STAT) >> 6); 
     uint8_t charge_status = ((access_buffer[0] & CHRG_STAT) >> 4);
-    #ifdef DEBUG_BQ24190
     if (access_buffer[0] > 0) {
-      DEBUG_BQ24190.printf("System Status: %s%s\n%s%s%s%s\n",
+      Serial.printf("System Status: %s%s\n%s%s%s%s\n",
         vbus_statuses[vbus_status], //00
         charger_statuses[charge_status], //00
         ((access_buffer[0] & DPM_STAT)   >> 3) ? "VINDPM or IINDPM, " : "Not DPM, ", //0
@@ -237,9 +236,10 @@ bool bq24190_maintainHostMode() {
         ((access_buffer[0] & VSYS_STAT)      ) ? "In VSYSMIN regulation (BAT < VSYSMIN)" : "Not in VSYSMIN regulation (BAT > VSYSMIN)"
       );
     } else {
+      #ifdef DEBUG_BQ24190
       DEBUG_BQ24190.printf("Nominal Status (%#x)\n", access_buffer[0]);
+      #endif
     }
-    #endif
   } else {
     // charger has entered default mode
     bq24190_init(bq24190);
