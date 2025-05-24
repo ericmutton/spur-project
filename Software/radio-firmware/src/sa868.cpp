@@ -3,6 +3,8 @@
 #define MAX_BUFFER_SIZE (50) // ESP32 UART FIFO size is max 128 bytes
 
 #define DEBUG_SA868 Serial
+
+extern sa868_config_t sa868;
 /** 
  * SA868 Instruction Set (<CR><LF>)
  */
@@ -83,6 +85,8 @@ char *response_formats[] = {
 //   return (sa868_instruction_set_t)(UNKNOWN);  // Return unknown instruction if not found
 // }
 
+
+// Continuous Tone-Coded Squelch System
 char sa868_ctcss_frequencies[38][9] = {
   "067.0 Hz", "071.9 Hz", "074.4 Hz", "077.0 Hz", "079.7 Hz", "082.5 Hz",
   "085.4 Hz", "088.5 Hz", "091.5 Hz", "094.8 Hz", "097.4 Hz", "100.0 Hz",
@@ -92,7 +96,7 @@ char sa868_ctcss_frequencies[38][9] = {
   "192.8 Hz", "203.5 Hz", "210.7 Hz", "218.1 Hz", "225.7 Hz", "233.6 Hz",
   "241.8 Hz", "250.3 Hz"
 };
-
+// Continuous Digital-Coded Squelch System
 char sa868_ctdss_code[100][5] = {
 	"023I", "025I", "026I", "031I", "032I", "043I", "047I", "051I", "054I", "065I", 
 	"071I", "072I", "073I", "074I", "114I", "115I", "116I", "125I", "131I", "132I", 
@@ -104,8 +108,8 @@ char sa868_ctdss_code[100][5] = {
 	"631I", "632I", "654I", "662I", "664I", "703I", "712I", "723I", "731I", "732I", 
 	"734I", "743I", "754I"
 };
-
-uint32_t sa868_ctdss_pattern[100] = {
+// 23-bit sequences from the ~4096 valid Golay codewords
+uint32_t sa868_cdcss_golay_code[100] = {
 	0x640E37, 0x540F6B, 0x340DD3, 0x4C0FC5, 0x2C0D7D, 0x620B6D, 0x720DF8, 0x4A0A9F,
 	0x1A097B, 0x560C5D, 0x4E0CF3, 0x2E0E4B, 0x6E0B3A, 0x1E0F17, 0x190BD6, 0x590EA7, 
 	0x390C1F, 0x550EF0, 0x4D0E5E, 0x2D0CE6, 0x1D0DBA, 0x630AF6, 0x2B09BC, 0x5B0D91, 
@@ -119,11 +123,16 @@ uint32_t sa868_ctdss_pattern[100] = {
 	0x1DCAD8, 0x63CD94, 0x1BCF82
 };
 
-extern sa868_config_t sa868;
-
-char *sa868_analog_subtone(char *ctcss_frequency) {
+/**
+ * Continuous Tone-Coded and Digital-Coded Squelch System
+ * @brief CXCSS codes contain either 0000 to 0038 or internal bitwise transforms.
+ * @param ctcss_frequency internal cstring to convert into human readable subtone 
+ * @returns the human readable 
+ */
+char *sa868_ctcss_subtone(char *ctcss_frequency) {
   return sa868_ctcss_frequencies[atoi(ctcss_frequency) - 1];
 }
+
 
 char command_buffer[MAX_BUFFER_SIZE];
 /**

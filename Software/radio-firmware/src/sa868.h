@@ -38,7 +38,7 @@ typedef enum {
   DMOERROR = -1  // Unknown instruction
 } sa868_instruction_set_t;
 
-char *sa868_analog_subtone(char *ctcss_frequency);
+char *sa868_ctcss_subtone(char *ctcss_frequency);
 
 /**
  * @brief this getter reads relevant configuration data into a command buffer.

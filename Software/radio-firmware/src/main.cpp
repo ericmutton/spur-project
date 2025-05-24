@@ -249,8 +249,8 @@ void displayCallback(TimerHandle_t xTimer) {
 
     offset += snprintf(display_format_buffer + offset, MAX_DISPLAY_COUNT - offset,
       "CTCSS/DCS RX=%s\nCTCSS/DCS TX=%s\n",
-      sa868.rx_subaudio == "0000" ? "NONE" : sa868_analog_subtone(sa868.rx_subaudio),
-      sa868.tx_subaudio == "0000" ? "NONE" : sa868_analog_subtone(sa868.tx_subaudio)
+      sa868.rx_subaudio == "0000" ? "NONE" : sa868_ctcss_subtone(sa868.rx_subaudio),
+      sa868.tx_subaudio == "0000" ? "NONE" : sa868_ctcss_subtone(sa868.tx_subaudio)
     );
 
     // Check if the final string fits in the display buffer
