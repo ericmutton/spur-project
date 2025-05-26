@@ -1,7 +1,7 @@
 (footprint "XCVR_ESP32-C3-DEVKITM-1"
-	(version 20240108)
+	(version 20241229)
 	(generator "pcbnew")
-	(generator_version "8.0")
+	(generator_version "9.0")
 	(layer "F.Cu")
 	(property "Reference" "REF**"
 		(at -9.775 -26.135 0)
@@ -21,18 +21,6 @@
 		(effects
 			(font
 				(size 1 1)
-				(thickness 0.15)
-			)
-		)
-	)
-	(property "Footprint" ""
-		(at 0 0 0)
-		(layer "F.Fab")
-		(hide yes)
-		(uuid "2ca4f702-28fe-4df0-83b5-df77a1529393")
-		(effects
-			(font
-				(size 1.27 1.27)
 				(thickness 0.15)
 			)
 		)
@@ -109,7 +97,7 @@
 			(width 0.2)
 			(type solid)
 		)
-		(fill none)
+		(fill no)
 		(layer "F.SilkS")
 		(uuid "ee73106c-e867-499c-8319-47cf5c92df6b")
 	)
@@ -290,7 +278,7 @@
 			(width 0.2)
 			(type solid)
 		)
-		(fill none)
+		(fill no)
 		(layer "F.Fab")
 		(uuid "3f73c80d-c959-4e09-8484-b4abcec0b592")
 	)
@@ -564,15 +552,16 @@
 		(solder_mask_margin 0.102)
 		(uuid "e9f83725-07b3-4162-8501-0dfccbe9bfcd")
 	)
+	(embedded_fonts no)
 	(model "${KIPRJMOD}/spur-demo.pretty/3dmodels/ESP32-C3-DEVKITM-1.step"
 		(offset
-			(xyz 0 0 0)
+			(xyz 0 0 8.5)
 		)
 		(scale
 			(xyz 1 1 1)
 		)
 		(rotate
-			(xyz -90 0 0)
+			(xyz -90 -0 -0)
 		)
 	)
 )

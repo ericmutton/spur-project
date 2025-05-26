@@ -1,7 +1,7 @@
 (footprint "HW-834"
-	(version 20240108)
+	(version 20241229)
 	(generator "pcbnew")
-	(generator_version "8.0")
+	(generator_version "9.0")
 	(layer "F.Cu")
 	(property "Reference" "REF**"
 		(at 0 -0.5 0)
@@ -20,19 +20,6 @@
 		(unlocked yes)
 		(layer "F.Fab")
 		(uuid "4830dea7-beaa-42a3-b5db-c510c0d7720f")
-		(effects
-			(font
-				(size 1 1)
-				(thickness 0.15)
-			)
-		)
-	)
-	(property "Footprint" ""
-		(at 0 0 0)
-		(unlocked yes)
-		(layer "F.Fab")
-		(hide yes)
-		(uuid "0521d1fd-9fa3-4366-a9f7-f4b60f314a96")
 		(effects
 			(font
 				(size 1 1)
@@ -230,7 +217,7 @@
 		)
 	)
 	(fp_text user "${REFERENCE}"
-		(at -0.025 -13.23 -90)
+		(at -0.025 -13.23 270)
 		(layer "F.Fab")
 		(uuid "ee7ad34b-a707-4378-8e8a-978cf843bd03")
 		(effects
@@ -304,37 +291,38 @@
 		(remove_unused_layers no)
 		(uuid "bbf75224-461d-4693-bddc-bc9866d41592")
 	)
+	(embedded_fonts no)
 	(model "${KIPRJMOD}/spur-demo.pretty/3dmodels/Keypad-4x4-NoHeader.step"
 		(offset
-			(xyz 20.1 11 11.1)
+			(xyz 20.1 11.5 11.1)
 		)
 		(scale
 			(xyz 1 1 1)
 		)
 		(rotate
-			(xyz 0 0 0)
+			(xyz -0 -0 -0)
 		)
 	)
 	(model "${KICAD8_3DMODEL_DIR}/Connector_PinSocket_2.54mm.3dshapes/PinSocket_1x08_P2.54mm_Vertical.step"
 		(offset
-			(xyz 0 21.6 0)
+			(xyz 0 22.1 0)
 		)
 		(scale
 			(xyz 1 1 1)
 		)
 		(rotate
-			(xyz 0 0 0)
+			(xyz -0 -0 -0)
 		)
 	)
 	(model "${KICAD8_3DMODEL_DIR}/Connector_PinHeader_2.54mm.3dshapes/PinHeader_1x08_P2.54mm_Vertical.step"
 		(offset
-			(xyz 0 21.5 11)
+			(xyz 0 22 11)
 		)
 		(scale
 			(xyz 1 1 1)
 		)
 		(rotate
-			(xyz 0 180 0)
+			(xyz -0 180 -0)
 		)
 	)
 )
