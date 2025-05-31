@@ -40,7 +40,7 @@ For the hardware, the platform is to allow off-the-shelf (and few bespoke) integ
 - [x] Develop a working 'two-way' radio prototype. 
   - [x] Phase out SA868 Demo Board by building a minimal breakout board
   - [x] Make prototype mobile through a rechargable cell and JEITA charger
-    - ![BQ24195](Documentation/Reference Designs/BQ24195 Layout Example.png)
+    - ![BQ24195](https://raw.githubusercontent.com/ericmutton/spur-project/refs/heads/main/Documentation/Reference%20Designs/BQ24195%20Layout%20Example.png)
   - [x] Amplify audio output of SA868 with anything other than an LM386 reference design
   - [x] Allow end-user to enter new RX and TX frequencies
   - [ ] All settings available to the end-user
