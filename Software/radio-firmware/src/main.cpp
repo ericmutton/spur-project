@@ -56,7 +56,6 @@ max98357a_config_t max98357a;
 #define TX_PIN (7)
 #define SA868_PD_PIN (PORT05)
 #define SA868_AF_PIN (0) // must be Analog Input
-sa868_config_t radio;
 sa868_config_t sa868;
 TimerHandle_t pttTimer;
 TimerHandle_t rssiTimer;
@@ -143,15 +142,6 @@ void powerCallback(TimerHandle_t xTimer) {
     bq24190_maintainHostMode();
 }
 
-// Radio Subsystem
-bool radioChanged() {
-  return (radio.rssi != sa868.rssi
-    || radio.volume_level != sa868.volume_level
-    || radio.rx_subaudio != sa868.rx_subaudio
-    || radio.tx_subaudio != sa868.tx_subaudio
-  );
-}
-
 // Received Signal Strength Indicator Handling
 bool pollingRSSI = false;
 void rssiCallback(TimerHandle_t xTimer) {
@@ -219,7 +209,7 @@ void readKeypadEntry(char key) {
 }
 
 void displayCallback(TimerHandle_t xTimer) {
-  if (rx_entry_mode || tx_entry_mode || ptt || radioChanged()) {
+  if (rx_entry_mode || tx_entry_mode || ptt) {
     radio.rssi = sa868.rssi;
     radio.volume_level = sa868.volume_level;
     radio.rx_subaudio = sa868.rx_subaudio;
