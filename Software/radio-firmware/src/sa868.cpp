@@ -2,7 +2,7 @@
 
 #define MAX_BUFFER_SIZE (50) // ESP32 UART FIFO size is max 128 bytes
 
-#define DEBUG_SA868 Serial
+// #define DEBUG_SA868 Serial
 
 extern sa868_config_t sa868;
 /** 
@@ -97,7 +97,7 @@ char sa868_ctcss_frequencies[38][9] = {
   "241.8 Hz", "250.3 Hz"
 };
 // Continuous Digital-Coded Squelch System
-char sa868_ctdss_code[100][5] = {
+char sa868_cdcss_code[100][5] = {
 	"023I", "025I", "026I", "031I", "032I", "043I", "047I", "051I", "054I", "065I", 
 	"071I", "072I", "073I", "074I", "114I", "115I", "116I", "125I", "131I", "132I", 
 	"134I", "143I", "152I", "155I", "156I", "162I", "165I", "172I", "174I", "205I",
