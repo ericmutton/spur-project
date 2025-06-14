@@ -112,7 +112,11 @@ void pttTimeoutCallback(TimerHandle_t xTimer) {
 }
 
 // Received Signal Strength Indicator Handling
+bool pollingRSSI = false;
 void rssiCallback(TimerHandle_t xTimer) {
+  pollingRSSI = true;
+}
+void updateRSSI() {
   int val = sa868_communication_handler(RSSI);
   if (val != DMOERROR) {
     // Datasheet suggests the module reports RSSI in dB.
@@ -121,9 +125,6 @@ void rssiCallback(TimerHandle_t xTimer) {
     //val *= -1; // RSSI is expected to be sub-milliwatt
     // -73 dBm is S9, -174 dBm S0
     sa868.rssi = -1*(255 - val);
-    #ifdef DEBUG_RSSI
-    DEBUG_RSSI.printf("RSSI on %.3d.%4.4d MHz : %.3d dBm\n", sa868.rx_freq_mhz, sa868.rx_freq_khz, val);
-    #endif
   }
   sa868.rssi = val;
 }
@@ -299,6 +300,11 @@ static void task(void *arg) {
     if (!xTimerIsTimerActive(rssiTimer)) {
       xTimerStart(rssiTimer, 0);
     }
+    if (pollingRSSI) {
+      updateRSSI();
+      Serial.printf("RSSI on %.3d.%4.4d MHz : %.3d dBm\n", sa868.rx_freq_mhz, sa868.rx_freq_khz, sa868.rssi);
+      pollingRSSI = false;
+    }
     // if (!xTimerIsTimerActive(displayTimer)) {
     //     xTimerStart(displayTimer, 0);
     // }
@@ -404,13 +410,17 @@ void setup() {
   // sa868.tx_freq_khz = 3750; 
 
   // national calling frequency 446.0000 MHz
-  sa868.rx_freq_mhz = 433;
-  sa868.rx_freq_khz = 1000;
-  sa868.tx_freq_mhz = 433;
-  sa868.tx_freq_khz = 1000;
+  sa868.rx_freq_mhz = 446;
+  sa868.rx_freq_khz = 0000;
+  sa868.tx_freq_mhz = 446;
+  sa868.tx_freq_khz = 0000;
   // dBm = dBW - (30 dBm - 16 dBm)
-  //sa868.rssi_offset = 99; 
-  val = sa868_init(sa868);
+  //sa868.rssi_offset = 99;
+  
+  do {
+    val = sa868_init(sa868);
+    vTaskDelay(1000/portTICK_PERIOD_MS);
+  } while (val == DMOERROR);
 
   // Power Subsystem PMIC Host Mode Timer
   powerTimer = xTimerCreate("PowerTimer", pdMS_TO_TICKS(1000), pdFALSE, NULL, powerCallback);
@@ -422,13 +432,13 @@ void setup() {
   pttTimer = xTimerCreate("PTTTimer", pdMS_TO_TICKS(1000), pdFALSE, NULL, pttTimeoutCallback);
   // RSSI Timer
   rssiTimer = xTimerCreate("RSSITimer", pdMS_TO_TICKS(1000), pdFALSE, NULL, rssiCallback);
-  // Audio Subsystem Timer
+  // // Audio Subsystem Timer
   audioTimer = xTimerCreate("AudioTimer", pdMS_TO_TICKS(1000), pdFALSE, NULL, audioCallback);
 
-  xTimerStart(audioTimer, 0);
-  xTimerStart(displayTimer, 0);
-  xTimerStart(inputTimer, 0);
-  Serial.println("Display and Keypad enabled...");
+  //xTimerStart(audioTimer, 0);
+  //xTimerStart(displayTimer, 0);
+  //xTimerStart(inputTimer, 0);
+  //Serial.println("Display and Keypad enabled...");
 
   xTaskCreate(task, "main_task", TASK_STACK_SIZE, NULL, 10, NULL);
 }
