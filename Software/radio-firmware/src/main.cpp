@@ -58,7 +58,6 @@ max98357a_config_t max98357a;
 #define SA868_AF_PIN (0) // must be Analog Input
 sa868_config_t sa868;
 TimerHandle_t pttTimer;
-TimerHandle_t rssiTimer;
 
 volatile bool inputFlag = false;
 void inputISR() {
@@ -114,7 +113,6 @@ void activePTT() {
 
 // Potentiometer wiper is on ADC input pin.
 #define VOLUME_WIPER_PIN 0
-TimerHandle_t audioTimer;
 
 // const int frequency = 440; // frequency of square wave in Hz
 // const int amplitude = 500; // amplitude of square wave
@@ -137,16 +135,7 @@ void loop() {
 /*---------------------- Tasks ---------------------*/
 /*--------------------------------------------------*/
 
-// Power Subsystem Handling
-void powerCallback(TimerHandle_t xTimer) {
-    bq24190_maintainHostMode();
-}
-
 // Received Signal Strength Indicator Handling
-bool pollingRSSI = false;
-void rssiCallback(TimerHandle_t xTimer) {
-  pollingRSSI = true;
-}
 void updateRSSI() {
   int val = sa868_communication_handler(RSSI);
   if (val != DMOERROR) {
@@ -156,8 +145,10 @@ void updateRSSI() {
     //val *= -1; // RSSI is expected to be sub-milliwatt
     // -73 dBm is S9, -174 dBm S0
     sa868.rssi = -1*(255 - val);
+    if (sa868.rssi != val) {
+      sa868.rssi = val;
+    }
   }
-  sa868.rssi = val;
 }
 
 // Keypad Handling
@@ -208,62 +199,120 @@ void readKeypadEntry(char key) {
   }
 }
 
+bool drawScreen = false;
 void displayCallback(TimerHandle_t xTimer) {
-  if (rx_entry_mode || tx_entry_mode || ptt) {
-    radio.rssi = sa868.rssi;
-    radio.volume_level = sa868.volume_level;
-    radio.rx_subaudio = sa868.rx_subaudio;
-    radio.tx_subaudio = sa868.tx_subaudio;
-    display_format_buffer = (char *)malloc(MAX_DISPLAY_COUNT);
-    Serial.println("Updating display...");
-    memset(display_format_buffer, 0, MAX_DISPLAY_COUNT);
-    int offset = 0;
+  drawScreen = true;
+}
 
-    if (!rx_entry_mode) {
-        offset += snprintf(display_format_buffer + offset, MAX_DISPLAY_COUNT - offset, "RX: %.3d.%4.4d MHz", sa868.rx_freq_mhz, sa868.rx_freq_khz);
-    } else {
-      offset += snprintf(display_format_buffer + offset, MAX_DISPLAY_COUNT - offset, "RX: %s MHz", entry);
-    }
-    offset += snprintf(display_format_buffer + offset, MAX_DISPLAY_COUNT - offset, "\n");
-    if (!tx_entry_mode) {
-        offset += snprintf(display_format_buffer + offset, MAX_DISPLAY_COUNT - offset, "TX: %.3d.%4.4d MHz", sa868.tx_freq_mhz, sa868.tx_freq_khz);
-    } else {
-        offset += snprintf(display_format_buffer + offset, MAX_DISPLAY_COUNT - offset, "RX: %s MHz", entry);
-    }
-    offset += snprintf(display_format_buffer + offset, MAX_DISPLAY_COUNT - offset, "\n");
-    if (ptt) {
-        offset += snprintf(display_format_buffer + offset, MAX_DISPLAY_COUNT - offset,
-          "PTT: %d/180 sec \n", pttElapsedSeconds
-        );
-    } else {
-        offset += snprintf(display_format_buffer + offset, MAX_DISPLAY_COUNT - offset,
-          "RSSI: %.3d dBm (%s)\n",
-          sa868.rssi, sa868_s_meter()
-        );
-    }
-    offset += snprintf(display_format_buffer + offset, MAX_DISPLAY_COUNT - offset,
-      "VOLUME: %d/8 AS: %d/8\n",
-      sa868.volume_level, sa868.squelch
-    );
-    // char *rx_subaudio = "RX=";
-    // char *tx_subaudio = "TX=";
 
-    offset += snprintf(display_format_buffer + offset, MAX_DISPLAY_COUNT - offset,
-      "CTCSS/DCS RX=%s\nCTCSS/DCS TX=%s\n",
-      sa868.rx_subaudio == "0000" ? "NONE" : sa868_ctcss_subtone(sa868.rx_subaudio),
-      sa868.tx_subaudio == "0000" ? "NONE" : sa868_ctcss_subtone(sa868.tx_subaudio)
-    );
 
-    // Check if the final string fits in the display buffer
-    if (offset >= MAX_DISPLAY_COUNT) {
-        // Handle error: contents too long
-        free(display_format_buffer);
-        return;
+const char* display_template[5] = {
+  "%s RX: %.3d.%4.4d MHz\n",
+  "%s TX: %.3d.%4.4d MHz\n",
+  "%s AS: %d/8 VOLUME: %d/8\n",
+  "%s CXCSS RX=%s\n%s CXCSS TX=%s\n"
+};
+
+char* display_format[5];
+
+bool audio_squelch_entry_mode = false;
+
+int8_t selection = 0;
+uint16_t rotary_encoder_presses = 0;
+
+void updateDisplayFormatBuffer() {
+  display_format_buffer = (char *)malloc(MAX_DISPLAY_COUNT);
+  memset(display_format_buffer, 0, MAX_DISPLAY_COUNT);
+  int offset = 0;
+  display_format[0] = (char *)display_template[0];
+  display_format[1] = (char *)display_template[1];
+  display_format[2] = (char *)display_template[2];
+  display_format[3] = (char *)display_template[3];
+  selection = rotary_encoder_counter;
+  if (rotary_encoder_pressed) {
+    rotary_encoder_presses++;
+    switch (selection) {
+      // Change frequency
+      case 0: {
+        display_format[0] = (char *)"%s RX: XXX.XXXX MHz\n";
+        rx_entry_mode = true;
+        tx_entry_mode = false;
+      };
+      case 1: {
+        display_format[1] = (char *)"%s TX: XXX.XXXX MHz\n";
+        rx_entry_mode = false;
+        tx_entry_mode = true;
+      };
+      // Change Audio Squelch Level
+      case 2: {
+        if (audio_squelch_entry_mode) { 
+          selection = 2;
+          sa868.squelch = rotary_encoder_counter;
+          if (rotary_encoder_presses >= 1 && sa868_communication_handler(SETGROUP) == 0) {
+            audio_squelch_entry_mode = false;
+            rotary_encoder_presses = 0;
+            display_format[2] = (char *)"%s ASQ:  =%d VOL: %d/8\n";
+          }
+        } else {
+          display_format[2] = (char *)"%s ASQ: X/8 VOL: %d/8\n";
+        }
+        audio_squelch_entry_mode = true;
+      };
+      // Select Squelch System
+      case 3: {
+        display_format[3] = (char *)"%s CXCSS RX=XXXX\n%s CXCSS TX=%s\n";
+      };
+      case 4: {
+        display_format[3] = (char *)"%s CXCSS RX=%s\n%s CXCSS TX=XXXX\n";
+      };
     }
-    snprintf(display_buffer, MAX_DISPLAY_COUNT, "%s", display_format_buffer);
-    free(display_format_buffer);
-    ssd1306_drawScreen(display_buffer);
+    rotary_encoder_pressed = false;
   }
+  // carousel selection operation
+  if (selection <= -1 ) {
+    rotary_encoder_counter = 4;
+  }
+  if (selection > 4) {
+    rotary_encoder_counter = 0;
+  }
+  offset += snprintf(display_format_buffer + offset, MAX_DISPLAY_COUNT - offset, display_format[0],
+    (selection == 0) ? "*" : " ", sa868.rx_freq_mhz, sa868.rx_freq_khz
+  );
+  offset += snprintf(display_format_buffer + offset, MAX_DISPLAY_COUNT - offset, display_format[1],
+    (selection == 1) ? "*" : " ", sa868.tx_freq_mhz, sa868.tx_freq_khz
+  );
+  if (ptt) {
+      offset += snprintf(display_format_buffer + offset, MAX_DISPLAY_COUNT - offset,
+        "  PTT: %d/180 sec \n", pttElapsedSeconds
+      );
+  } else {
+      offset += snprintf(display_format_buffer + offset, MAX_DISPLAY_COUNT - offset,
+        "  RSSI: %.3d dBm (%s)\n",
+        sa868.rssi, sa868_s_meter()
+      );
+  }
+  
+  offset += snprintf(display_format_buffer + offset, MAX_DISPLAY_COUNT - offset,
+    display_format[2], (selection == 2) ? "*" : " ",
+    sa868.squelch, sa868.volume_level
+  );
+
+  offset += snprintf(display_format_buffer + offset, MAX_DISPLAY_COUNT - offset,
+    display_format[3],
+    (selection == 3) ? "*" : " ",
+    sa868.rx_subaudio == "0000" ? "NONE" : sa868_ctcss_subtone(sa868.rx_subaudio),
+    (selection == 4) ? "*" : " ",
+    sa868.tx_subaudio == "0000" ? "NONE" : sa868_ctcss_subtone(sa868.tx_subaudio)
+  );
+
+  // Check if the final string fits in the display buffer
+  if (offset >= MAX_DISPLAY_COUNT) {
+      // Handle error: contents too long
+      free(display_format_buffer);
+      return;
+  }
+  snprintf(display_buffer, MAX_DISPLAY_COUNT, "%s", display_format_buffer);
+  free(display_format_buffer);
 }
 
 // #include <I2S.h>
@@ -280,19 +329,18 @@ void displayCallback(TimerHandle_t xTimer) {
 // i2s_mode_t mode = I2S_PHILIPS_MODE; // I2S decoder is needed
 
 // Volume Level Control Handling
-bool pollingVolume = false;
-void updateVolume() {
+bool updateVolume() {
+  int response;
   uint16_t wiper = analogRead(VOLUME_WIPER_PIN);
   uint8_t volume = map(wiper, 0, 4095, 1, 8);
   // analogReadResolution(12);
   if (sa868.volume_level != volume) {
     sa868.volume_level = volume;
-    int val = sa868_communication_handler(SETVOLUME);
-    Serial.printf("Volume level adjusted to %d/8\n", sa868.volume_level);
+    int response = sa868_communication_handler(SETVOLUME);
   }
+  return response;
 }
 void audioCallback(TimerHandle_t xTimer) {
-  pollingVolume = true;
   // //uint16_t sampled_audio = analogRead(SA868_AF_PIN);
   // if (count % halfWavelength == 0) {
   //     // invert the sample every half wavelength count multiple to generate square wave
@@ -328,31 +376,19 @@ static void task(void *arg) {
         pttTimeoutSeconds = 0;
         pttElapsedSeconds = 0;
       }
-      // if (!xTimerIsTimerActive(audioTimer)) {
-      //     xTimerStart(audioTimer, 0);
-      // }
     }
-    if (!xTimerIsTimerActive(audioTimer)) {
-      xTimerStart(audioTimer, 0);
+    if (!xTimerIsTimerActive(displayTimer)) {
+      xTimerStart(displayTimer, 0);
     }
-    if (pollingVolume) {
+    if (drawScreen) {
+      bq24190_maintainHostMode();
       updateVolume();
-      pollingVolume = false;
-    }
-
-    if (!xTimerIsTimerActive(rssiTimer)) {
-      xTimerStart(rssiTimer, 0);
-    }
-    
-    if (pollingRSSI) {
       updateRSSI();
-      pollingRSSI = false;
-      Serial.printf("RSSI on %.3d.%4.4d MHz : %.3d dBm\n", sa868.rx_freq_mhz, sa868.rx_freq_khz, sa868.rssi);
+      updateDisplayFormatBuffer();
+      Serial.printf("%s\n",display_buffer);
+      ssd1306_drawScreen(display_buffer);
+      drawScreen = false;
     }
-    // if (!xTimerIsTimerActive(displayTimer)) {
-    //     xTimerStart(displayTimer, 0);
-    // }
-    vTaskDelay(50/portTICK_PERIOD_MS);
   }
   vTaskDelete(NULL);
 }
@@ -377,8 +413,8 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(pcf8575.pin_interrupt), inputISR, CHANGE);
   pcf8575.i2c = &Wire;
   int val = pcf8575_init(pcf8575);
-  pcf8575_portMode(ENCODER_CLK_PIN, INPUT);
-  pcf8575_portMode(ENCODER_DT_PIN, INPUT);
+  pcf8575_portMode(ENCODER_CLK_PIN, INPUT_PULLUP);
+  pcf8575_portMode(ENCODER_DT_PIN, INPUT_PULLUP);
   pcf8575_portMode(ENCODER_SW_PIN, INPUT_PULLUP);
   rotary_encoder_clocked = pcf8575_readPort(ENCODER_CLK_PIN); // initial quadrature
   // Initialize Keypad GPIO pins
@@ -466,22 +502,10 @@ void setup() {
     vTaskDelay(1000/portTICK_PERIOD_MS);
   } while (val == DMOERROR);
 
-  // Power Subsystem PMIC Host Mode Timer
-  powerTimer = xTimerCreate("PowerTimer", pdMS_TO_TICKS(1000), pdFALSE, NULL, powerCallback);
   // Display Refresh Timer
-  displayTimer = xTimerCreate("DisplayTimer", pdMS_TO_TICKS(500), pdFALSE, NULL, displayCallback);
-  // Input and Keypad Timer
-  // inputTimer = xTimerCreate("InputTimer", pdMS_TO_TICKS(short_press_delay_milliseconds), pdFALSE, NULL, keypadDelayCallback);
+  displayTimer = xTimerCreate("DisplayTimer", pdMS_TO_TICKS(1000), pdFALSE, NULL, displayCallback);
   // PTT Timeout Timer
   pttTimer = xTimerCreate("PTTTimer", pdMS_TO_TICKS(1000), pdFALSE, NULL, pttTimeoutCallback);
-  // RSSI Timer
-  rssiTimer = xTimerCreate("RSSITimer", pdMS_TO_TICKS(1000), pdFALSE, NULL, rssiCallback);
-  // // Audio Subsystem Timer
-  audioTimer = xTimerCreate("AudioTimer", pdMS_TO_TICKS(1000), pdFALSE, NULL, audioCallback);
-
-  //xTimerStart(displayTimer, 0);
-  //xTimerStart(inputTimer, 0);
-  //Serial.println("Display and Keypad enabled...");
 
   xTaskCreate(task, "main_task", TASK_STACK_SIZE, NULL, 10, NULL);
 }
