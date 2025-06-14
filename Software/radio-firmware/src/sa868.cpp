@@ -133,7 +133,6 @@ char *sa868_ctcss_subtone(char *ctcss_frequency) {
   return sa868_ctcss_frequencies[atoi(ctcss_frequency) - 1];
 }
 
-
 char command_buffer[MAX_BUFFER_SIZE];
 /**
  * @brief this getter reads relevant configuration data into a command buffer.
@@ -202,9 +201,6 @@ char *sa868_generateCommand(sa868_instruction_set_t instruction){
           sa868.voice_lowpass_bypass);
       break;
   }
-  #ifdef DEBUG_SA868
-  DEBUG_SA868.printf("Generated command: %s \n", command_buffer);
-  #endif
   return command_buffer;
 }
 /**
@@ -222,28 +218,35 @@ int sa868_communication_handler(sa868_instruction_set_t instruction) {
   HardwareSerial *uart = sa868.UART;
   int rxFIFOcount, txFIFOcount;
   txFIFOcount = uart->write(command, strlen(command));
+  // initialization instructions are handled with additional delay
+  if (instruction == CONNECT
+    || instruction == SETGROUP 
+    || instruction == SETVOLUME 
+    || instruction == SETFILTER) {
+      vTaskDelay(220/portTICK_PERIOD_MS); // any faster and response is DMOERROR.
+  }
+  // uart->flush(true); // flush txFIFO or delay UART buffer access
   if (txFIFOcount > 0) {
-    #ifdef DEBUG_SA868
-    DEBUG_SA868.printf("Sent command over UART of size (%d) bytes: %s\n", txFIFOcount, command);
-    #endif
-    //uart.flush(); // flush or delay UART buffer access
-    vTaskDelay(800);
+    //while (!uart->available());
     int availableBytes = uart->available();
     if (availableBytes > 0) {
       rxFIFOcount = uart->readBytesUntil('\n', response, MAX_BUFFER_SIZE - 1);
       #ifdef DEBUG_SA868
+      DEBUG_SA868.printf("Sent command over UART of size (%d) bytes: %s", txFIFOcount, command);
       if (rxFIFOcount > 0) {
         DEBUG_SA868.printf("Received response over UART of size (%d) bytes: %s\n", rxFIFOcount, response);
       }
       #endif
     }
   }
+  //uart->flush(); // flush or delay UART buffer access
   if (response == response_formats[DMOERROR]) {
     val = DMOERROR;
   } else {
     // extract instruction return value from response
     int returnCount = sscanf(response, response_formats[instruction], &val);
   }
+  
   free(response);
   return val;
 }

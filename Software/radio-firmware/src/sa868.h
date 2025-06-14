@@ -24,7 +24,7 @@ typedef struct {
     bool voice_lowpass_bypass = false;  
 
     int16_t rssi = 0; // ranges from 0 to 255
-    int8_t rssi_offset = -30; // Module reports RSSI value in dB
+    int8_t rssi_offset = 0; // Module reports RSSI value in dB
 
 } sa868_config_t;
 
