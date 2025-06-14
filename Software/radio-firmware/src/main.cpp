@@ -95,20 +95,25 @@ void powerCallback(TimerHandle_t xTimer) {
 
 // Radio Subsystem
 // Push-To-Talk Handling
-bool ptt = false;
-int pttElapsedSeconds = 0;
-
+volatile bool ptt = false;
+int pttElapsedSeconds = 0; // Elapsed PTT time in seconds
+int pttTimeoutSeconds = 0; // Previous PTT time in seconds
+// Software timer callback for counting PTT time in seconds 
 void pttTimeoutCallback(TimerHandle_t xTimer) {
-    pttElapsedSeconds++;
-    if (pttElapsedSeconds >= sa868.PTT_TIMEOUT_SECONDS) {
-        pcf8575_writePort(SA868_PTT_PIN, HIGH);  // Bypass PTT
-        Serial.println("PTT Timeout reached, bypassing PTT...");
-        xTimerStop(pttTimer, 0);
-        pttElapsedSeconds = 0;
-        ptt = false;
-    } else {
-        Serial.printf("Currently PTT... (%d sec)\n", pttElapsedSeconds);
-    }
+  pttElapsedSeconds++;
+}
+void activePTT() {
+  if (pttTimeoutSeconds != pttElapsedSeconds) {
+    Serial.printf("Currently PTT... (%d sec)\n", pttElapsedSeconds);
+  }
+  pttTimeoutSeconds = pttElapsedSeconds;
+  // Push-to-Talk has an optional timeout.
+  if (sa868.PTT_TIMEOUT_SECONDS != -1 && pttTimeoutSeconds >= sa868.PTT_TIMEOUT_SECONDS) {
+    pcf8575_writePort(SA868_PTT_PIN, HIGH);  // Bypass PTT
+    xTimerStop(pttTimer, 0);
+    ptt = false;
+    Serial.println("PTT Timeout reached, bypassing PTT...");
+  }
 }
 
 // Received Signal Strength Indicator Handling
@@ -134,22 +139,6 @@ char entry[8] = "";
 bool rx_entry_mode = false, tx_entry_mode = false;
 
 void inputCallback(TimerHandle_t xTimer) {
-  Serial.println("Hello INPUT!.");
-  ptt = (pcf8575_readPort(SA868_PTT_BUTTON) == LOW);
-  if (ptt) {
-    Serial.println("PTT is HIGH.");
-    if (!xTimerIsTimerActive(pttTimer)) {
-      xTimerStart(pttTimer, 0);
-    }
-  } else {
-    if (xTimerIsTimerActive(pttTimer)) {
-      xTimerStop(pttTimer, 0);
-    }
-    if (!xTimerIsTimerActive(audioTimer)) {
-        xTimerStart(audioTimer, 0);
-    }
-    pttElapsedSeconds = 0;
-  }
   char key = pcf8575_readKeypad(key_ghost_count);
   if (key != '\0') {
     char key_to_enter[2];
@@ -197,7 +186,10 @@ void updateVolume() {
   uint16_t wiper = analogRead(VOLUME_WIPER_PIN);
   uint8_t volume = map(wiper, 0, 4095, 1, 8);
   sa868.volume_level = volume;
-  int val = sa868_communication_handler(SETVOLUME);
+  if (sa868.volume_level != volume) {
+    sa868.volume_level = volume;
+    int val = sa868_communication_handler(SETVOLUME);
+  }
 }
 
 bool radioChanged() {
@@ -297,6 +289,25 @@ static void task(void *arg) {
     // if (!xTimerIsTimerActive(inputTimer)) {
     //   xTimerStart(inputTimer, 0);
     // }
+    // Poll PTT button from port expander.
+    ptt = (pcf8575_readPort(SA868_PTT_BUTTON) == LOW);
+    if (ptt) {
+      if (!xTimerIsTimerActive(pttTimer)) {
+        xTimerStart(pttTimer, 0);
+      }
+      activePTT();
+    } else {
+      // once no longer PTT, stop timeout timer and start audio.
+      if (xTimerIsTimerActive(pttTimer)) {
+        xTimerStop(pttTimer, 0);
+        pttTimeoutSeconds = 0;
+        pttElapsedSeconds = 0;
+      }
+      // if (!xTimerIsTimerActive(audioTimer)) {
+      //     xTimerStart(audioTimer, 0);
+      // }
+    }
+
     if (!xTimerIsTimerActive(rssiTimer)) {
       xTimerStart(rssiTimer, 0);
     }
@@ -331,8 +342,8 @@ void setup() {
   // pcf8575_portMode(ENCODER_RIGHT_PIN, INPUT_PULLUP);
 
   // Initialize GPIO expander
-  //pcf8575.pin_interrupt = PCF8575_INT_PIN;
-  //attachInterrupt(digitalPinToInterrupt(PCF8575_INT_PIN), inputISR, CHANGE);
+  pcf8575.pin_interrupt = PCF8575_INT_PIN;
+  attachInterrupt(digitalPinToInterrupt(PCF8575_INT_PIN), inputISR, CHANGE);
   pcf8575.i2c = &Wire;
   int val = pcf8575_init(pcf8575);
   // Initialize Keypad GPIO pins
