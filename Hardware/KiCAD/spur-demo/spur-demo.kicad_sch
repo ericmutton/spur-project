@@ -4514,9 +4514,20 @@
 		)
 		(uuid "76ad40cc-17f8-4337-a873-939ebdca0d0f")
 	)
+	(text "TODO: reconcile use of PORT07\nas ENC_SW and COL5"
+		(exclude_from_sim no)
+		(at 15.24 147.32 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "cc567487-455e-48ad-baaf-62b63149329a")
+	)
 	(text "I2C BUS ADDRESSING\nREAD = 0x41\nWRITE = 0x40"
 		(exclude_from_sim no)
-		(at 26.162 188.214 0)
+		(at 18.542 188.214 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4566,6 +4577,12 @@
 			(justify left top)
 		)
 		(uuid "9b709211-77a9-425f-a9b2-fa6c5fed97ec")
+	)
+	(junction
+		(at 53.34 176.53)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "10c9737d-fe93-4081-a0ee-32558a0c2ffc")
 	)
 	(junction
 		(at 39.37 115.57)
@@ -4809,7 +4826,7 @@
 	)
 	(wire
 		(pts
-			(xy 43.18 172.72) (xy 26.67 172.72)
+			(xy 35.56 172.72) (xy 19.05 172.72)
 		)
 		(stroke
 			(width 0)
@@ -4859,7 +4876,7 @@
 	)
 	(wire
 		(pts
-			(xy 33.02 177.8) (xy 33.02 180.34)
+			(xy 25.4 177.8) (xy 25.4 180.34)
 		)
 		(stroke
 			(width 0)
@@ -4959,7 +4976,7 @@
 	)
 	(wire
 		(pts
-			(xy 38.1 175.26) (xy 26.67 175.26)
+			(xy 30.48 175.26) (xy 19.05 175.26)
 		)
 		(stroke
 			(width 0)
@@ -5046,6 +5063,16 @@
 			(type default)
 		)
 		(uuid "3a3b1162-8b3f-4a21-98e9-e436b52c616c")
+	)
+	(wire
+		(pts
+			(xy 44.45 176.53) (xy 53.34 176.53)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3a9ab630-87b8-4331-81f5-35d4c7679743")
 	)
 	(wire
 		(pts
@@ -5399,7 +5426,7 @@
 	)
 	(wire
 		(pts
-			(xy 43.18 180.34) (xy 43.18 172.72)
+			(xy 35.56 180.34) (xy 35.56 172.72)
 		)
 		(stroke
 			(width 0)
@@ -6069,7 +6096,7 @@
 	)
 	(wire
 		(pts
-			(xy 38.1 180.34) (xy 38.1 175.26)
+			(xy 30.48 180.34) (xy 30.48 175.26)
 		)
 		(stroke
 			(width 0)
@@ -6159,7 +6186,7 @@
 	)
 	(wire
 		(pts
-			(xy 26.67 177.8) (xy 33.02 177.8)
+			(xy 19.05 177.8) (xy 25.4 177.8)
 		)
 		(stroke
 			(width 0)
@@ -6408,7 +6435,7 @@
 		(uuid "fef9c19e-489c-4243-8190-6b7cb5d962ad")
 	)
 	(label "A2"
-		(at 26.67 177.8 0)
+		(at 19.05 177.8 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -6718,7 +6745,7 @@
 		(uuid "7cf220b8-4944-40b4-a4a0-f1e597863b72")
 	)
 	(label "A0"
-		(at 26.67 172.72 0)
+		(at 19.05 172.72 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -7027,8 +7054,18 @@
 		)
 		(uuid "eb512497-9c9e-44cc-8844-1c295ed0f056")
 	)
+	(label "ENC_SW"
+		(at 44.45 176.53 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "f74922c7-fc7c-469d-9f18-9186eb82f2fa")
+	)
 	(label "A1"
-		(at 26.67 175.26 0)
+		(at 19.05 175.26 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -7640,7 +7677,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 33.02 180.34 0)
+		(at 25.4 180.34 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -7649,7 +7686,7 @@
 		(fields_autoplaced yes)
 		(uuid "2db095f4-f4aa-432d-a641-ff165383501f")
 		(property "Reference" "#PWR08"
-			(at 33.02 186.69 0)
+			(at 25.4 186.69 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7658,7 +7695,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 33.02 185.42 0)
+			(at 25.4 185.42 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7666,7 +7703,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 33.02 180.34 0)
+			(at 25.4 180.34 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7675,7 +7712,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 33.02 180.34 0)
+			(at 25.4 180.34 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7684,7 +7721,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 33.02 180.34 0)
+			(at 25.4 180.34 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9145,7 +9182,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 43.18 180.34 0)
+		(at 35.56 180.34 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -9154,7 +9191,7 @@
 		(fields_autoplaced yes)
 		(uuid "ade9f6bf-fa4a-4b22-a511-5c3e99c0bb6f")
 		(property "Reference" "#PWR010"
-			(at 43.18 186.69 0)
+			(at 35.56 186.69 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9163,7 +9200,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 43.18 185.42 0)
+			(at 35.56 185.42 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9171,7 +9208,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 43.18 180.34 0)
+			(at 35.56 180.34 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9180,7 +9217,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 43.18 180.34 0)
+			(at 35.56 180.34 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9189,7 +9226,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 43.18 180.34 0)
+			(at 35.56 180.34 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9840,7 +9877,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 38.1 180.34 0)
+		(at 30.48 180.34 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -9849,7 +9886,7 @@
 		(fields_autoplaced yes)
 		(uuid "e7488823-fb95-4b24-a344-76f5c49b8824")
 		(property "Reference" "#PWR09"
-			(at 38.1 186.69 0)
+			(at 30.48 186.69 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9858,7 +9895,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 38.1 185.42 0)
+			(at 30.48 185.42 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9866,7 +9903,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 38.1 180.34 0)
+			(at 30.48 180.34 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9875,7 +9912,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 38.1 180.34 0)
+			(at 30.48 180.34 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9884,7 +9921,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 38.1 180.34 0)
+			(at 30.48 180.34 0)
 			(effects
 				(font
 					(size 1.27 1.27)
