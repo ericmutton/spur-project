@@ -8078,7 +8078,7 @@
 				)
 			)
 		)
-		(property "Footprint" "RotaryEncoder_Bourns_Horizontal_PEC12R-2x17F-Sxxxx"
+		(property "Footprint" "Rotary_Encoder:RotaryEncoder_Bourns_Horizontal_PEC12R-2x17F-Sxxxx"
 			(at 201.93 147.066 0)
 			(effects
 				(font
