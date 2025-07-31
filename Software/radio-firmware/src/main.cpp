@@ -30,7 +30,7 @@ TimerHandle_t displayTimer;
 
 /* BQ24190 definitions */
 #define BQ24190_INT_PIN (4)
-#define BQ24190_OTG_PIN (PORT04)
+// #define BQ24190_OTG_PIN
 #define BQ24190_NCE_PIN (PORT03)
 bq24190_config_t bq24190;
 TimerHandle_t powerTimer;
@@ -47,7 +47,7 @@ TimerHandle_t inputTimer;
 #define MAX98357A_BCLK (8)
 #define MAX98357A_LRCLK (9)
 #define MAX98357A_DIN (2)
-#define MAX98357A_SD (PORT02)
+#define MAX98357A_SD (PORT04)
 max98357a_config_t max98357a;
 
 /* SA868 definitions */
@@ -98,9 +98,6 @@ void pttTimeoutCallback(TimerHandle_t xTimer) {
   pttElapsedSeconds++;
 }
 void activePTT() {
-  if (pttTimeoutSeconds != pttElapsedSeconds) {
-    Serial.printf("Currently PTT... (%d sec)\n", pttElapsedSeconds);
-  }
   pttTimeoutSeconds = pttElapsedSeconds;
   // Push-to-Talk has an optional timeout.
   if (sa868.PTT_TIMEOUT_SECONDS != -1 && pttTimeoutSeconds >= sa868.PTT_TIMEOUT_SECONDS) {
@@ -204,12 +201,10 @@ void displayCallback(TimerHandle_t xTimer) {
   drawScreen = true;
 }
 
-
-
 const char* display_template[5] = {
   "%s RX: %.3d.%4.4d MHz\n",
   "%s TX: %.3d.%4.4d MHz\n",
-  "%s AS: %d/8 VOLUME: %d/8\n",
+  "%s ASQ: %d/8 VOL: %d/8\n",
   "%s CXCSS RX=%s\n%s CXCSS TX=%s\n"
 };
 
@@ -221,7 +216,7 @@ int8_t selection = 0;
 uint16_t rotary_encoder_presses = 0;
 
 void updateDisplayFormatBuffer() {
-  display_format_buffer = (char *)malloc(MAX_DISPLAY_COUNT);
+  display_format_buffer = (char *)pvPortMalloc(MAX_DISPLAY_COUNT);
   memset(display_format_buffer, 0, MAX_DISPLAY_COUNT);
   int offset = 0;
   display_format[0] = (char *)display_template[0];
@@ -248,11 +243,11 @@ void updateDisplayFormatBuffer() {
         if (audio_squelch_entry_mode) { 
           selection = 2;
           sa868.squelch = rotary_encoder_counter;
-          if (rotary_encoder_presses >= 1 && sa868_communication_handler(SETGROUP) == 0) {
-            audio_squelch_entry_mode = false;
-            rotary_encoder_presses = 0;
-            display_format[2] = (char *)"%s ASQ:  =%d VOL: %d/8\n";
-          }
+          // if (rotary_encoder_presses >= 1 && sa868_communication_handler(SETGROUP) == 0) {
+          //   audio_squelch_entry_mode = false;
+          //   rotary_encoder_presses = 0;
+          //   display_format[2] = (char *)"%s ASQ:  =%d VOL: %d/8\n";
+          // }
         } else {
           display_format[2] = (char *)"%s ASQ: X/8 VOL: %d/8\n";
         }
@@ -308,11 +303,11 @@ void updateDisplayFormatBuffer() {
   // Check if the final string fits in the display buffer
   if (offset >= MAX_DISPLAY_COUNT) {
       // Handle error: contents too long
-      free(display_format_buffer);
+      vPortFree(display_format_buffer);
       return;
   }
   snprintf(display_buffer, MAX_DISPLAY_COUNT, "%s", display_format_buffer);
-  free(display_format_buffer);
+  vPortFree(display_format_buffer);
 }
 
 // #include <I2S.h>
@@ -381,11 +376,11 @@ static void task(void *arg) {
       xTimerStart(displayTimer, 0);
     }
     if (drawScreen) {
-      bq24190_maintainHostMode();
-      updateVolume();
-      updateRSSI();
+      // bq24190_maintainHostMode();
+      // updateVolume();
+      // updateRSSI();
       updateDisplayFormatBuffer();
-      Serial.printf("%s\n",display_buffer);
+      //Serial.printf("%s\n",display_buffer);
       ssd1306_drawScreen(display_buffer);
       drawScreen = false;
     }
@@ -429,13 +424,16 @@ void setup() {
 
   // Initialize OLED display
   ssd1306.i2c = &Wire;
-  val = ssd1306_init(ssd1306);
+  do {
+    val = ssd1306_init(ssd1306);
+    vTaskDelay(1000/portTICK_PERIOD_MS);
+  } while (val == -1);
   // Initialize power subsystem
   bq24190.OTG = true;
   bq24190.pin_interrupt = BQ24190_INT_PIN;
   pinMode(bq24190.pin_interrupt, INPUT_PULLUP);
-  pcf8575_portMode(BQ24190_OTG_PIN, OUTPUT); // active high
-  pcf8575_writePort(BQ24190_OTG_PIN, bq24190.OTG);
+  // pcf8575_portMode(BQ24190_OTG_PIN, OUTPUT); // active high
+  // pcf8575_writePort(BQ24190_OTG_PIN, bq24190.OTG);
   pcf8575_portMode(BQ24190_NCE_PIN, OUTPUT); // active low
   pcf8575_writePort(BQ24190_NCE_PIN, LOW);
   bq24190.i2c = &Wire;
@@ -465,7 +463,7 @@ void setup() {
   pcf8575_portMode(SA868_PD_PIN, OUTPUT); // active low
   pcf8575_writePort(SA868_PD_PIN, HIGH);
   pcf8575_portMode(PTT_BUTTON_PIN, INPUT_PULLUP); // active low
-  pinMode(SA868_AF_PIN, INPUT);
+  //pinMode(SA868_AF_PIN, INPUT);
   /**
    * UART Interface Format:
    * Baud rate = 9600 Baud
@@ -498,7 +496,8 @@ void setup() {
   //sa868.rssi_offset = 99;
   
   do {
-    val = sa868_init(sa868);
+    val == DMOERROR;
+    // val = sa868_init(sa868);
     vTaskDelay(1000/portTICK_PERIOD_MS);
   } while (val == DMOERROR);
 
