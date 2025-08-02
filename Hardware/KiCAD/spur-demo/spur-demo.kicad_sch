@@ -4894,7 +4894,7 @@
 	)
 	(wire
 		(pts
-			(xy 121.92 151.13) (xy 121.92 153.67)
+			(xy 121.92 148.59) (xy 121.92 146.05)
 		)
 		(stroke
 			(width 0)
@@ -4934,7 +4934,7 @@
 	)
 	(wire
 		(pts
-			(xy 121.92 148.59) (xy 134.62 148.59)
+			(xy 121.92 151.13) (xy 134.62 151.13)
 		)
 		(stroke
 			(width 0)
@@ -5054,7 +5054,7 @@
 	)
 	(wire
 		(pts
-			(xy 134.62 151.13) (xy 121.92 151.13)
+			(xy 134.62 148.59) (xy 121.92 148.59)
 		)
 		(stroke
 			(width 0)
@@ -5314,7 +5314,7 @@
 	)
 	(wire
 		(pts
-			(xy 134.62 153.67) (xy 125.73 153.67)
+			(xy 134.62 146.05) (xy 125.73 146.05)
 		)
 		(stroke
 			(width 0)
@@ -5364,7 +5364,7 @@
 	)
 	(wire
 		(pts
-			(xy 134.62 156.21) (xy 125.73 156.21)
+			(xy 125.73 143.51) (xy 134.62 143.51)
 		)
 		(stroke
 			(width 0)
@@ -5654,7 +5654,7 @@
 	)
 	(wire
 		(pts
-			(xy 121.92 146.05) (xy 121.92 148.59)
+			(xy 121.92 153.67) (xy 121.92 151.13)
 		)
 		(stroke
 			(width 0)
@@ -6803,7 +6803,7 @@
 		(uuid "994a7f25-4bd2-4c5b-86e4-a43d80a62e88")
 	)
 	(label "I2C0_SCL"
-		(at 125.73 153.67 0)
+		(at 125.73 146.05 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -6853,7 +6853,7 @@
 		(uuid "a67aa07d-1e89-41f9-9414-d64720573513")
 	)
 	(label "I2C0_SDA"
-		(at 125.73 156.21 0)
+		(at 125.73 143.51 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -7131,6 +7131,7 @@
 	(symbol
 		(lib_id "power:+3V3")
 		(at 121.92 146.05 0)
+		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -7926,7 +7927,8 @@
 	)
 	(symbol
 		(lib_id "Connector:Conn_01x04_Socket")
-		(at 139.7 151.13 0)
+		(at 139.7 148.59 0)
+		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -7934,7 +7936,7 @@
 		(dnp no)
 		(uuid "34676735-1864-4c58-af7f-3300d2f27b7d")
 		(property "Reference" "J1"
-			(at 140.97 151.1299 0)
+			(at 140.97 148.5901 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7943,7 +7945,7 @@
 			)
 		)
 		(property "Value" "SSD1306 Module"
-			(at 124.714 143.51 0)
+			(at 123.698 154.178 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7952,7 +7954,7 @@
 			)
 		)
 		(property "Footprint" "spur-demo:SSD1306"
-			(at 139.7 151.13 0)
+			(at 139.7 148.59 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7961,7 +7963,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 139.7 151.13 0)
+			(at 139.7 148.59 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7970,7 +7972,7 @@
 			)
 		)
 		(property "Description" "Generic connector, single row, 01x04, script generated"
-			(at 139.7 151.13 0)
+			(at 139.7 148.59 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9293,6 +9295,7 @@
 	(symbol
 		(lib_id "power:GND")
 		(at 121.92 153.67 0)
+		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
