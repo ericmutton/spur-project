@@ -104,6 +104,14 @@ typedef struct {
   bool jeita_low_temperature_current_20_percent = false;
 
   uint8_t fault_sources = INT_MASK_CHRG_FAULT | INT_MASK_BAT_FAULT;
+  uint8_t fault_status;
+  // 
+  uint8_t charger_fault;
+  uint8_t ntc_fault;
+  uint8_t system_status;
+  // status strings
+  char *vbus_status;
+  char *charge_status;
   //OTG
   bool OTG = false;
 } bq24190_config_t;

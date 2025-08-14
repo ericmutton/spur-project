@@ -6,17 +6,17 @@
 // standard mode (up to 100 kbits),
 // and fast mode (up to 400 kbits).
 
-// #define DEBUG_BQ24190 Serial
+#define DEBUG_BQ24190 Serial
 
 extern bq24190_config_t bq24190;
 char access_buffer[sizeof(uint8_t)];
 
 // Table 15. REG08 System Status Register Description
 const char* vbus_statuses[4] {
-  "VBUS is Unknown (no input, or DPDM detection incomplete), ",
-  "VBUS is USB host, ",
-  "VBUS is Adapter port, ",
-  "VBUS is OTG, "
+  "VBUS=Unknown, ", // no input, or DPDM detection incomplete
+  "VBUS=USB 2.0, ",
+  "VBUS=Adapter, ",
+  "VBUS=USB OTG, "
 };
 const char* charger_statuses[4] {
   "Not Charging, ",
@@ -138,37 +138,29 @@ int bq24190_readFaultRegister(char *access_buffer) {
    * Charge Complete
    * Any FAULT event in REG09
    */
-  bytes_transferred = bq24190_readRegister(access_buffer, REG09);
-  if (bytes_transferred > 0) {
-    // #ifdef DEBUG_BQ24190
-    // Serial.printf("Present Faults: %s%s%s%s%s%s\n",
-    //   ((access_buffer[0] & WATCHDOG_FAULT) >> 7)      ? "WATCHDOG, " : "",
-    //   ((access_buffer[0] & BOOST_FAULT)    >> 6)      ? "BOOST, " : "",
-    //   ((access_buffer[0] & CHRG_FAULT)     >> 4)  > 0 ? "CHARGE, " : "",
-    //   ((access_buffer[0] & BAT_FAULT)      >> 3)      ? "BATTERY, " : "",
-    //   ((access_buffer[0] & NTC_FAULT)          )  > 0 ? "NTC" : "",
-    //   ((access_buffer[0])                      ) == 0 ? "NONE" : ""
-    // );
-    // #endif
-  }
-  bytes_transferred = bq24190_readRegister(access_buffer, REG09);
+  bytes_transferred = bq24190_readRegister(access_buffer, REG09); // read once then twice to clear
   
-  uint8_t charger_fault = (access_buffer[0] & CHRG_FAULT) >> 4;
-  uint8_t ntc_fault = access_buffer[0] & NTC_FAULT;
 
-  #ifdef DEBUG_BQ24190
-  DEBUG_BQ24190.printf("Power Faults: %s%s%s%s%s%s", // Enumerate each fault as presented
-    ((access_buffer[0] & WATCHDOG_FAULT) >> 7) ? "WATCHDOG, " : "",
-    ((access_buffer[0] & BOOST_FAULT)    >> 6) ? "BOOST, " : "",
-    (charger_fault) > 0                        ? charger_faults[charger_fault] : "",
-    ((access_buffer[0] & BAT_FAULT)      >> 3) ? "BATTERY OVP, " : "",
-    (ntc_fault) > 0                            ? ntc_faults[ntc_fault] : "",
-    ((access_buffer[0])                 ) == 0 ? "NONE; " : ""
-  );
-  if (access_buffer[0] != 0) {
-    Serial.println();
+  if (bytes_transferred > 0) {
+    bq24190.fault_status = access_buffer[0];
+    bq24190.charger_fault = (bq24190.fault_status & CHRG_FAULT) >> 4;
+    bq24190.ntc_fault = bq24190.fault_status & NTC_FAULT;
+    #ifdef DEBUG_BQ24190
+    DEBUG_BQ24190.printf("Power Faults: %s%s%s%s%s%s", // Enumerate each fault as presented
+      ((bq24190.fault_status & WATCHDOG_FAULT) >> 7) ? "WATCHDOG, " : "",
+      ((bq24190.fault_status & BOOST_FAULT)    >> 6) ? "BOOST, " : "",
+      (bq24190.charger_fault) > 0                        ? charger_faults[bq24190.charger_fault] : "",
+      ((bq24190.fault_status & BAT_FAULT)      >> 3) ? "BATTERY OVP, " : "",
+      (bq24190.ntc_fault) > 0                            ? ntc_faults[bq24190.ntc_fault] : "",
+      ((bq24190.fault_status)                 ) == 0 ? "NONE; " : ""
+    );
+    if (bq24190.fault_status != 0) {
+      Serial.println();
+    }
+    #endif
   }
-  #endif
+  bytes_transferred = bq24190_readRegister(access_buffer, REG09); // will clear the fault register
+
   return bytes_transferred;
 }
 
@@ -224,16 +216,19 @@ bool bq24190_maintainHostMode() {
     bq24190_modifyRegister(REG01, WATCHDOG_RESET, true);
 
     bytes_transferred = bq24190_readRegister(access_buffer, REG08);
-    uint8_t vbus_status = ((access_buffer[0] & VBUS_STAT) >> 6); 
-    uint8_t charge_status = ((access_buffer[0] & CHRG_STAT) >> 4);
-    if (access_buffer[0] > 0) {
+    bq24190.system_status = access_buffer[0];
+    uint8_t vbus_status = ((bq24190.system_status & VBUS_STAT) >> 6); 
+    uint8_t charge_status = ((bq24190.system_status & CHRG_STAT) >> 4);
+    if (bq24190.system_status > 0) {
+      bq24190.vbus_status = (char *) vbus_statuses[vbus_status];
+      bq24190.charge_status = (char *) charger_statuses[charge_status];
       Serial.printf("System Status: %s%s\n%s%s%s%s\n",
         vbus_statuses[vbus_status], //00
         charger_statuses[charge_status], //00
-        ((access_buffer[0] & DPM_STAT)   >> 3) ? "VINDPM or IINDPM, " : "Not DPM, ", //0
-        ((access_buffer[0] & PG_STAT)    >> 2) ? "Power Good, " : "Not Power Good, ", //0
-        ((access_buffer[0] & THERM_STAT) >> 1) ? "In Thermal Regulation, " : "Normal, ", //0
-        ((access_buffer[0] & VSYS_STAT)      ) ? "In VSYSMIN regulation (BAT < VSYSMIN)" : "Not in VSYSMIN regulation (BAT > VSYSMIN)"
+        ((bq24190.system_status & DPM_STAT)   >> 3) ? "VINDPM or IINDPM, " : "Not DPM, ", //0
+        ((bq24190.system_status & PG_STAT)    >> 2) ? "Power Good, " : "Not Power Good, ", //0
+        ((bq24190.system_status & THERM_STAT) >> 1) ? "In Thermal Regulation, " : "Normal, ", //0
+        ((bq24190.system_status & VSYS_STAT)      ) ? "In VSYSMIN regulation (BAT < VSYSMIN)" : "Not in VSYSMIN regulation (BAT > VSYSMIN)"
       );
     } else {
       #ifdef DEBUG_BQ24190
