@@ -1,8 +1,9 @@
 #include "sa868.h"
+#include "pcf8575.h"
 
 #define MAX_BUFFER_SIZE (50) // ESP32 UART FIFO size is max 128 bytes
 
-// #define DEBUG_SA868 Serial
+#define DEBUG_SA868 Serial
 
 extern sa868_config_t sa868;
 /** 
@@ -235,6 +236,8 @@ int sa868_communication_handler(sa868_instruction_set_t instruction) {
       DEBUG_SA868.printf("Sent command over UART of size (%d) bytes: %s", txFIFOcount, command);
       if (rxFIFOcount > 0) {
         DEBUG_SA868.printf("Received response over UART of size (%d) bytes: %s\n", rxFIFOcount, response);
+      } else {
+        DEBUG_SA868.printf("There was no response buffered into RX FIFO of selected UART!\n");
       }
       #endif
     }
@@ -253,6 +256,7 @@ int sa868_communication_handler(sa868_instruction_set_t instruction) {
 
 int sa868_init(sa868_config_t &configuration) {
   sa868 = configuration;
+  pcf8575_writePort(sa868.pin_shutdown, HIGH); // enable DMO, sd pin is active low
   // Configure a temporary buffer for the response
   int val = DMOERROR;
   for (int attempt = 0; attempt < sa868.MAX_CONNECTION_ATTEMPTS; attempt++) {

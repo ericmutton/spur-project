@@ -10,6 +10,8 @@ typedef struct {
     uint16_t PTT_TIMEOUT_SECONDS = -1; // default is no timeout
     uint16_t sweep_freq_mhz; uint16_t sweep_freq_khz;
 
+    uint8_t pin_shutdown; 
+
     bool bandwidth_wide_fm = true;
     uint16_t tx_freq_mhz; uint16_t tx_freq_khz;
     uint16_t rx_freq_mhz; uint16_t rx_freq_khz;
