@@ -4565,7 +4565,7 @@
 	)
 	(symbol
 		(lib_id "Mechanical:MountingHole")
-		(at 220.98 105.41 0)
+		(at 203.2 111.76 0)
 		(unit 1)
 		(exclude_from_sim yes)
 		(in_bom no)
@@ -4574,7 +4574,7 @@
 		(fields_autoplaced yes)
 		(uuid "4f2fcd02-7062-40e1-9d46-dc5a63a21be0")
 		(property "Reference" "H2"
-			(at 223.52 104.1399 0)
+			(at 205.74 110.4899 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4582,8 +4582,8 @@
 				(justify left)
 			)
 		)
-		(property "Value" "MountingHole_2.2mm_M2_Pad_Via"
-			(at 223.52 106.6799 0)
+		(property "Value" "MountingHole_2.7mm_M2_Pad_Via"
+			(at 205.74 113.0299 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4591,8 +4591,8 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "MountingHole:MountingHole_2.2mm_M2_Pad_Via"
-			(at 220.98 105.41 0)
+		(property "Footprint" "MountingHole:MountingHole_2.7mm_Pad_Via"
+			(at 203.2 111.76 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4601,7 +4601,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 220.98 105.41 0)
+			(at 203.2 111.76 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4610,7 +4610,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 220.98 105.41 0)
+			(at 203.2 111.76 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5291,7 +5291,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "MountingHole_2.2mm_M2_Pad_Via"
+		(property "Value" "MountingHole_2.7mm_M2_Pad_Via"
 			(at 205.74 106.6799 0)
 			(effects
 				(font
@@ -5300,7 +5300,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "MountingHole:MountingHole_2.2mm_M2_Pad_Via"
+		(property "Footprint" "MountingHole:MountingHole_2.7mm_Pad_Via"
 			(at 203.2 105.41 0)
 			(effects
 				(font
