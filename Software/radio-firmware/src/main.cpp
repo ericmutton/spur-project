@@ -1,7 +1,7 @@
 
 #include "bq24190.h"
 #include "pcf8575.h"
-#include "max98357a.h"
+#include "pam8302a.h"
 #include "sa868.h"
 #include "ssd1306.h"
 
@@ -29,13 +29,26 @@ ssd1306_config_t ssd1306;
 TimerHandle_t displayTimer;
 
 /* BQ24190 definitions */
-#define BQ24190_INT_PIN (4)
+#define BQ24190_INT_PIN (0)
 // #define BQ24190_OTG_PIN
 #define BQ24190_NCE_PIN (PORT03)
 bq24190_config_t bq24190;
 TimerHandle_t powerTimer;
 
-
+// Table 16. REG09 Fault Register Description
+const char* charger_faults_tag[4] {
+  "Normal, ",
+  "Input Fault (VBUS OVP or VBAT < VBUS < 3.8 V), ",
+  "Thermal shutdown, ",
+  "Charge Safety Timer Expiration, "
+};
+const char* ntc_faults_tag[5] {
+  "Normal (T2-T3), ",
+  "Warm (T3-T5), ",
+  "Cool (T1-T2), ",
+  "Cold (< T1), ",
+  "Hot (> T5), "
+};
 
 int key_ghost_count;
 int keys_entered;
@@ -44,18 +57,20 @@ int long_press_delay_milliseconds = 500;
 TimerHandle_t inputTimer;
 
 /* MAX98357A definitions */
-#define MAX98357A_BCLK (8)
-#define MAX98357A_LRCLK (9)
-#define MAX98357A_DIN (2)
-#define MAX98357A_SD (PORT04)
-max98357a_config_t max98357a;
+// #define MAX98357A_BCLK (8)
+// #define MAX98357A_LRCLK (9)
+// #define MAX98357A_DIN (2)
+// #define MAX98357A_SD (PORT04)
+// max98357a_config_t max98357a;
+
+#define PAM8302A_SD (PORT04)
+pam8302a_config_t pam8302a;
 
 /* SA868 definitions */
 #define BAUD_RATE (9600)
-#define RX_PIN (6)
-#define TX_PIN (7)
+#define RX_PIN (20)
+#define TX_PIN (21)
 #define SA868_PD_PIN (PORT05)
-#define SA868_AF_PIN (0) // must be Analog Input
 sa868_config_t sa868;
 TimerHandle_t pttTimer;
 
@@ -109,7 +124,7 @@ void activePTT() {
 }
 
 // Potentiometer wiper is on ADC input pin.
-#define VOLUME_WIPER_PIN 0
+#define VOLUME_WIPER_PIN 4
 
 // const int frequency = 440; // frequency of square wave in Hz
 // const int amplitude = 500; // amplitude of square wave
@@ -134,7 +149,8 @@ void loop() {
 
 // Received Signal Strength Indicator Handling
 void updateRSSI() {
-  int val = sa868_communication_handler(RSSI);
+  int val = DMOERROR;
+  // val = sa868_communication_handler(RSSI);
   if (val != DMOERROR) {
     // Datasheet suggests the module reports RSSI in dB.
     // What is the fixed reference value for the SA868?
@@ -215,7 +231,7 @@ bool audio_squelch_entry_mode = false;
 int8_t selection = 0;
 uint16_t rotary_encoder_presses = 0;
 
-void updateDisplayFormatBuffer() {
+void display_DMO_status() {
   display_format_buffer = (char *)pvPortMalloc(MAX_DISPLAY_COUNT);
   memset(display_format_buffer, 0, MAX_DISPLAY_COUNT);
   int offset = 0;
@@ -310,6 +326,43 @@ void updateDisplayFormatBuffer() {
   vPortFree(display_format_buffer);
 }
 
+
+void display_BMS_status() {
+  display_format_buffer = (char *)pvPortMalloc(MAX_DISPLAY_COUNT);
+  memset(display_format_buffer, 0, MAX_DISPLAY_COUNT);
+  int offset = 0;
+
+  if (bq24190.charger_fault == 0 /*Exclude Charger Fault: Normal*/) {
+      offset += snprintf(display_format_buffer + offset, MAX_DISPLAY_COUNT - offset,
+        "%s\n%s\n%s%s%s%s\n",
+            bq24190.vbus_status,
+            bq24190.charge_status,
+            ((bq24190.system_status & DPM_STAT)   >> 3) ? "VINDPM or IINDPM, " : "Not DPM, ", //0
+            ((bq24190.system_status & PG_STAT)    >> 2) ? "Power Good, " : "Not Power Good, ", //0
+            ((bq24190.system_status & THERM_STAT) >> 1) ? "In Thermal Regulation, " : "Normal, ", //0
+            ((bq24190.system_status & VSYS_STAT)      ) ? "In VSYSMIN Regulation (BAT < VSYSMIN)" : "Not in VSYSMIN Regulation (BAT > VSYSMIN)"
+      );
+  } else {
+      offset += snprintf(display_format_buffer + offset, MAX_DISPLAY_COUNT - offset,
+        "Power Faults: %s%s%s%s%s%s", // Enumerate each fault as presented
+            ((bq24190.fault_status & WATCHDOG_FAULT) >> 7) ? "WATCHDOG, " : "",
+            ((bq24190.fault_status & BOOST_FAULT)    >> 6) ? "BOOST, " : "",
+            (bq24190.charger_fault) >= 0                        ? charger_faults_tag[bq24190.charger_fault] : "",
+            ((bq24190.fault_status & BAT_FAULT)      >> 3) ? "BATTERY OVP, " : "",
+            (bq24190.ntc_fault) >= 0                            ? ntc_faults_tag[bq24190.ntc_fault] : "",
+            ((bq24190.fault_status)                 ) == 0 ? "NONE; " : ""
+      );
+  }
+  // Check if the final string fits in the display buffer
+  if (offset >= MAX_DISPLAY_COUNT) {
+      // Handle error: contents too long
+      vPortFree(display_format_buffer);
+      return;
+  }
+  snprintf(display_buffer, MAX_DISPLAY_COUNT, "%s", display_format_buffer);
+  vPortFree(display_format_buffer);
+}
+
 // #include <I2S.h>
 // const int frequency = 440; // frequency of square wave in Hz
 // const int amplitude = 500; // amplitude of square wave
@@ -331,7 +384,7 @@ bool updateVolume() {
   // analogReadResolution(12);
   if (sa868.volume_level != volume) {
     sa868.volume_level = volume;
-    int response = sa868_communication_handler(SETVOLUME);
+    // int response = sa868_communication_handler(SETVOLUME);
   }
   return response;
 }
@@ -345,6 +398,9 @@ void audioCallback(TimerHandle_t xTimer) {
   // //Serial.printf("SA868_AF_PIN: %d (centered %d)", sampled_audio, sampled_audio - 512);
   // max98357a_audio_data_in(sampled_audio);
 }
+
+volatile bool booted = false;
+volatile bool debug_mode = false; 
 static void task(void *arg) {
   int val;
   while (1) {
@@ -355,10 +411,14 @@ static void task(void *arg) {
       // Poll Rotary Encoder from port expander.
       readEncoderDirection();
       rotary_encoder_pressed = (pcf8575_readPort(ENCODER_SW_PIN) == LOW);
+      if (!booted && rotary_encoder_pressed) {
+        debug_mode = true;
+      }
       // Poll keypad from port expander.
       char key = pcf8575_readKeypad(key_ghost_count);
       readKeypadEntry(key);
     }
+    booted = true;
     if (ptt) {
       if (!xTimerIsTimerActive(pttTimer)) {
         xTimerStart(pttTimer, 0);
@@ -376,11 +436,15 @@ static void task(void *arg) {
       xTimerStart(displayTimer, 0);
     }
     if (drawScreen) {
-      // bq24190_maintainHostMode();
-      // updateVolume();
-      // updateRSSI();
-      updateDisplayFormatBuffer();
-      //Serial.printf("%s\n",display_buffer);
+      bq24190_maintainHostMode();
+      if (debug_mode) {
+        bq24190_enableCharging(false);
+        display_BMS_status();
+      } else {
+        updateVolume();
+        // updateRSSI();
+        display_DMO_status();
+      }
       ssd1306_drawScreen(display_buffer);
       drawScreen = false;
     }
@@ -424,8 +488,10 @@ void setup() {
 
   // Initialize OLED display
   ssd1306.i2c = &Wire;
+  snprintf(display_buffer, MAX_DISPLAY_COUNT, "%s", "UHF Handheld Radio\nBased on SA8X8 Module\nde Eric Mutton KJ5DIF\nThanks to UTD ECE\n& Dr. Bill Swartz");
   do {
     val = ssd1306_init(ssd1306);
+    ssd1306_drawScreen(display_buffer);
     vTaskDelay(1000/portTICK_PERIOD_MS);
   } while (val == -1);
   // Initialize power subsystem
@@ -442,38 +508,41 @@ void setup() {
   bq24190_enableCharging(false);
 
   // Initialize audio subsystem
-  i2s_pin_config_t pin_config = {
-    .bck_io_num = MAX98357A_BCLK,   // Serial clock (SCK), aka bit clock (BCK)
-    .ws_io_num = MAX98357A_LRCLK,   // Word select (WS), i.e. command (channel) select, used to switch between left and right channel data
-    .data_out_num = MAX98357A_DIN,   // Serial data signal (SD), used to transmit audio data in two's complement format
-    .data_in_num = I2S_PIN_NO_CHANGE  // Not used
-  };
-  max98357a.pin_config = pin_config;
-  max98357a.pin_shutdown = MAX98357A_SD;
-  pcf8575_portMode(max98357a.pin_shutdown, OUTPUT);
-  pcf8575_writePort(max98357a.pin_shutdown, LOW); // active high
-  val = max98357a_init(max98357a);
-
+  // i2s_pin_config_t pin_config = {
+  //   .bck_io_num = MAX98357A_BCLK,   // Serial clock (SCK), aka bit clock (BCK)
+  //   .ws_io_num = MAX98357A_LRCLK,   // Word select (WS), i.e. command (channel) select, used to switch between left and right channel data
+  //   .data_out_num = MAX98357A_DIN,   // Serial data signal (SD), used to transmit audio data in two's complement format
+  //   .data_in_num = I2S_PIN_NO_CHANGE  // Not used
+  // };
+  // max98357a.pin_config = pin_config;
+  // max98357a.pin_shutdown = MAX98357A_SD;
+  // pcf8575_portMode(max98357a.pin_shutdown, OUTPUT);
+  // pcf8575_writePort(max98357a.pin_shutdown, LOW); // active high
+  // val = max98357a_init(max98357a);
+  pam8302a.pin_shutdown = PAM8302A_SD;
+  pcf8575_portMode(pam8302a.pin_shutdown, OUTPUT);
+  pcf8575_writePort(pam8302a.pin_shutdown, LOW); // active high
+  val = pam8302a_init(pam8302a);
   // audioTimer = timerBegin(0, 80, true); // Timer 0, prescaler 80 (1 MHz)
   // timerAttachInterrupt(audioTimer, &audioCallback, true);
   //timerAlarmWrite(audioTimer, 12500, true); // 1 second
   //timerAlarmEnable(audioTimer); // Start the timer
 
-  // Initialize communications subsystem
-  pcf8575_portMode(SA868_PD_PIN, OUTPUT); // active low
-  pcf8575_writePort(SA868_PD_PIN, HIGH);
+  // Initialize communications subsystem 
+  sa868.pin_shutdown = SA868_PD_PIN;
+  pcf8575_portMode(sa868.pin_shutdown, OUTPUT); 
+  pcf8575_writePort(sa868.pin_shutdown, LOW); // active low
   pcf8575_portMode(PTT_BUTTON_PIN, INPUT_PULLUP); // active low
-  //pinMode(SA868_AF_PIN, INPUT);
   /**
    * UART Interface Format:
    * Baud rate = 9600 Baud
    * Data bit = 8 bit
    * Parity = None
    * Stop bit = 1 bit
-   * Terminal Rx,Tx pins = GPIO6,GPIO7 @ 3.3V
+   * Terminal Rx,Tx pins = GPIO20,GPIO21 @ 3.3V
    */
   Serial1.begin(BAUD_RATE, SERIAL_8N1, RX_PIN, TX_PIN);
-  sa868.UART = &Serial1; // using UART1 for SA868
+  sa868.UART = &Serial0; // using UART0 for SA868
   // sa868.MAX_CONNECTION_ATTEMPTS = 3;
   sa868.PTT_TIMEOUT_SECONDS = 180; // 180 second timeout
   sa868.bandwidth_wide_fm = 1; // BW = 25 kHz
@@ -495,11 +564,11 @@ void setup() {
   // dBm = dBW - (30 dBm - 16 dBm)
   //sa868.rssi_offset = 99;
   
-  do {
-    val == DMOERROR;
-    // val = sa868_init(sa868);
-    vTaskDelay(1000/portTICK_PERIOD_MS);
-  } while (val == DMOERROR);
+  // val == DMOERROR;
+  // do {
+  //   val = sa868_init(sa868);
+  //   vTaskDelay(1000/portTICK_PERIOD_MS);
+  // } while (val == DMOERROR);
 
   // Display Refresh Timer
   displayTimer = xTimerCreate("DisplayTimer", pdMS_TO_TICKS(1000), pdFALSE, NULL, displayCallback);
